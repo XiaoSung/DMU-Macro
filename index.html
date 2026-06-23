@@ -169,13 +169,8 @@
         <div class="panel-head">
           <h2>パーティチャット</h2>
         </div>
-        <div class="log" id="log"><div class="empty">— 按下右邊任一個宏，輸出會出現在這裡 —</div></div>
+        <div class="log" id="log"></div>
       </div>
-
-      <p class="hint">
-        資料集中在程式碼裡的 <b>PHASES</b> 陣列，要新增/修改宏照同格式貼一段即可。
-        P1 按下會貼出位置圖，P3前各基準按下即把站位表貼進頻道。
-      </p>
     </div>
 
     <div id="bars"></div>
@@ -191,7 +186,7 @@
    ============================================================ */
 const PHASES = [
   { id:"p1", label:"P1", groups:[
-    { label:"ずびずばテレポ", note:"混乱睡眠固定 — 同じ矢印=赤枠 / 違う矢印=青枠", macros:[
+    { label:"ずびずばテレポ", note:"混亂睡眠固定式 — 相同箭頭＝紅框／不同箭頭＝藍框", macros:[
       { name:"位置図", icon:{label:"\u21D5",type:"ref"},
         image:{ src:"https://yan-flash.com/api/uploads/1780476493649-398c3c2d.webp",
                 alt:"\u305A\u3073\u305A\u3070\u30C6\u30EC\u30DD \u4F4D\u7F6E\u56F3" } }
@@ -476,12 +471,7 @@ function selectPhase(idx){
 }
 function renderBars(phase){
   barsEl.innerHTML="";
-  if(!phase.groups.length){
-    const p=document.createElement("p");
-    p.className="empty"; p.style.padding="6px 2px";
-    p.textContent="（此分頁先保留，宏之後再放）";
-    barsEl.appendChild(p); return;
-  }
+  if(!phase.groups.length) return;
   phase.groups.forEach(g=>{
     const wrap=document.createElement("div"); wrap.className="group";
     const lbl=document.createElement("div"); lbl.className="group-label";
