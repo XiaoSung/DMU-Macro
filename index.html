@@ -392,7 +392,12 @@ const PHASES = [
     ]}
   ]},
 
-  { id:"p3b", label:"P3後", groups:[] }   // 先保留分頁，宏之後再放
+  { id:"p3b", label:"P3後", groups:[
+    { label:"黑洞（後半）", note:"連線全程對照圖", macros:[
+      { name:"全程圖", icon:{label:"\u56F3",type:"ref"},
+        image:{ src:"P3.jpg", alt:"P3\u5F8C\u534A \u9023\u7DDA\u5168\u7A0B\u5716" } }
+    ]}
+  ]}
 ];
 
 /* ===================== 引擎 ===================== */
@@ -491,7 +496,7 @@ function renderBars(phase){
   });
 }
 
-$("#clearBtn").onclick=()=>{ logEl.innerHTML='<div class="empty"></div>'; };
+$("#clearBtn").onclick=()=>{ logEl.innerHTML='<div class="empty">— 已清除 —</div>'; };
 
 buildTabs();
 selectPhase(0);
