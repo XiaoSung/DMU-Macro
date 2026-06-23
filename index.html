@@ -146,6 +146,16 @@
   .img-fallback a{color:var(--cyan)}
   .empty{color:var(--muted);font-style:italic;white-space:normal}
 
+  /* 全寬特例：寬度=整個頁面內容區，置於熱鍵列上方，不影響按鈕排版 */
+  .wideview{display:none;margin:0 0 18px}
+  .wideview.show{display:block;animation:fade .18s ease}
+  .wideview a{display:block;line-height:0}
+  .wideview img{
+    display:block;width:100%;height:auto;border-radius:10px;
+    border:1px solid var(--border);box-shadow:0 8px 26px rgba(0,0,0,.5);
+  }
+  .wideview .cap{font-size:12px;color:var(--muted);margin:6px 2px 0;line-height:1.4}
+
   .hint{color:var(--muted);font-size:12px;margin:14px 2px 0;line-height:1.6}
   .hint b{color:var(--gold-soft);font-weight:600}
 </style>
@@ -162,6 +172,8 @@
   </header>
 
   <div class="tabs" id="tabs" role="tablist"></div>
+
+  <div class="wideview" id="wideview" aria-live="polite"></div>
 
   <div class="layout">
     <div class="chat-wrap">
@@ -395,7 +407,7 @@ const PHASES = [
   { id:"p3b", label:"P3後", groups:[
     { label:"黑洞（後半）", note:"連線全程對照圖", macros:[
       { name:"全程圖", icon:{label:"\u56F3",type:"ref"},
-        image:{ src:"P3.jpg", alt:"P3\u5F8C\u534A \u9023\u7DDA\u5168\u7A0B\u5716" } }
+        image:{ src:"P3.jpg", wide:true, alt:"P3\u5F8C\u534A \u9023\u7DDA\u5168\u7A0B\u5716" } }
     ]}
   ]}
 ];
@@ -403,6 +415,7 @@ const PHASES = [
 /* ===================== 引擎 ===================== */
 const $ = s => document.querySelector(s);
 const logEl = $("#log");
+const wideEl = $("#wideview");
 
 function escapeHtml(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
 function renderChips(s){return escapeHtml(s).replace(/《([^》]*)》/g,'<span class="chip">$1</span>');}
@@ -443,14 +456,38 @@ function appendImage(img){
   logEl.appendChild(el); logEl.scrollTop=logEl.scrollHeight;
 }
 
-function clearLog(){ logEl.innerHTML=""; }
+function clearLog(){
+  logEl.innerHTML="";
+  wideEl.innerHTML=""; wideEl.classList.remove("show");
+}
+
+function showWide(img){
+  wideEl.innerHTML="";
+  const a=document.createElement("a");
+  a.href=img.src; a.target="_blank"; a.rel="noopener";
+  const el=document.createElement("img");
+  el.src=img.src; el.alt=img.alt||""; el.loading="lazy";
+  el.onerror=()=>{
+    wideEl.innerHTML='<div class="img-fallback" style="padding:10px">圖片載入失敗：請確認 P3.jpg 與 index.html 放在同一層、且檔名大小寫一致。</div>';
+    wideEl.classList.add("show");
+  };
+  a.appendChild(el); wideEl.appendChild(a);
+  const cap=document.createElement("div");
+  cap.className="cap"; cap.textContent="點圖可開新分頁放大";
+  wideEl.appendChild(cap);
+  wideEl.classList.add("show");
+  wideEl.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
 
 function flashSlot(slot){ slot.classList.add("running"); setTimeout(()=>slot.classList.remove("running"),320); }
 
 function runMacro(macro,slot){
   flashSlot(slot);
   clearLog();   // /clear：每個宏開頭先清空對話框
-  if(macro.image) appendImage(macro.image);
+  if(macro.image){
+    if(macro.image.wide) showWide(macro.image);
+    else appendImage(macro.image);
+  }
   if(macro.raw){
     parseMacro(macro.raw).forEach(s=>{
       if(s.type==="chat") appendLine(renderChips(s.text)||"&nbsp;","party");
@@ -496,7 +533,7 @@ function renderBars(phase){
   });
 }
 
-$("#clearBtn").onclick=()=>{ logEl.innerHTML='<div class="empty">— 已清除 —</div>'; };
+$("#clearBtn").onclick=()=>{ clearLog(); };
 
 buildTabs();
 selectPhase(0);
