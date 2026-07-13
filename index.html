@@ -113,8 +113,9 @@
   .slot .name{font-size:11px;line-height:1.25;color:var(--muted)}
   .slot:hover .name{color:var(--text)}
   .slot .key{
-    position:absolute;top:3px;left:5px;font-size:10px;line-height:1;
-    color:var(--gold-soft);opacity:.8;text-shadow:0 1px 2px #000;
+    position:absolute;top:3px;left:4px;font-size:10px;line-height:1;
+    color:var(--gold-soft);opacity:.9;text-shadow:0 1px 2px #000;
+    background:rgba(8,12,24,.78);border-radius:4px;padding:2px 4px;
     pointer-events:none;letter-spacing:.02em;
   }
 
@@ -200,8 +201,9 @@
    icon : {label, type}  type 對應顏色 (A B C D 1 2 3 4 / ref)
    raw  : 宏原文（含 /p /micon 等），引擎會自行解析。
    image: {src, alt}  —— 按下時把圖片貼進聊天（可與 raw 並用）。
-   key  : 鍵盤快捷鍵，如 "a"、"3"、"shift+a"（可加 ctrl/alt/shift；
-          只在該分頁顯示中時生效，會顯示在按鈕左上角）。
+   key  : 鍵盤快捷鍵，如 "q"、"3"、"shift+q"（可加 ctrl/alt/shift）；
+          給陣列＝同一顆多重鍵位，如 ["shift+q","a"]。
+          只在該分頁顯示中時生效，會顯示在按鈕左上角。
    群組屬性 cols:4 —— 該組按鈕固定 4 欄排列（8 顆＝上下兩排）。
    ============================================================ */
 const PHASES = [
@@ -215,7 +217,7 @@ const PHASES = [
 
   { id:"p3a", label:"P3前", groups:[
     { label:"究極破壞光（アルテマブラスター）", note:"凱夫卡順時針／骰子逆時針（選好基準再按下）", cols:4, macros:[
-      { name:"基準 A", icon:{label:"A",type:"A"}, key:"a", raw:
+      { name:"基準 A", icon:{label:"A",type:"A"}, key:"q", raw:
 `/p -----------------------------------
 /p  1 : A1 |　　　　　A
 /p  2 : 1D |　　　　①　⑧
@@ -227,7 +229,7 @@ const PHASES = [
 /p  8 : 2A |　　　　④　⑤
 /p    　　　　　　　　C
 /micon "A" Waymark` },
-      { name:"基準 B", icon:{label:"B",type:"B"}, key:"b", raw:
+      { name:"基準 B", icon:{label:"B",type:"B"}, key:"w", raw:
 `/p -----------------------------------
 /p  1 : B2 |　　　　　Ｂ
 /p  2 : 2A |　　　　①　⑧
@@ -239,7 +241,7 @@ const PHASES = [
 /p  8 : 3B |　　　　④　⑤
 /p    　　　　　　　　Ｄ
 /micon "B" Waymark` },
-      { name:"基準 C", icon:{label:"C",type:"C"}, key:"c", raw:
+      { name:"基準 C", icon:{label:"C",type:"C"}, key:"e", raw:
 `/p -----------------------------------
 /p  1 : C3 |　　　　　Ｃ
 /p  2 : 3B |　　　　①　⑧
@@ -251,7 +253,7 @@ const PHASES = [
 /p  8 : 4C |　　　　④　⑤
 /p    　　　　　　　　Ａ
 /micon "C" Waymark` },
-      { name:"基準 D", icon:{label:"D",type:"D"}, key:"d", raw:
+      { name:"基準 D", icon:{label:"D",type:"D"}, key:"r", raw:
 `/p -----------------------------------
 /p  1 : D4 |　　　　　Ｄ
 /p  2 : 4C |　　　　①　⑧
@@ -313,7 +315,7 @@ const PHASES = [
 /micon "4" Waymark` }
     ]},
     { label:"究極破壞光（アルテマブラスター）", note:"凱夫卡逆時針／骰子順時針", cols:4, macros:[
-      { name:"基準 A", icon:{label:"A",type:"A"}, key:"shift+a", raw:
+      { name:"基準 A", icon:{label:"A",type:"A"}, key:["shift+q","a"], raw:
 `/p -----------------------------------
 /p  1 : A2 |　　　　　A
 /p  2 : 2B |　　　　⑧　①
@@ -325,7 +327,7 @@ const PHASES = [
 /p  8 : 1A |　　　　⑤　④
 /p    　　　　　　　　C
 /micon "A" Waymark` },
-      { name:"基準 B", icon:{label:"B",type:"B"}, key:"shift+b", raw:
+      { name:"基準 B", icon:{label:"B",type:"B"}, key:["shift+w","s"], raw:
 `/p -----------------------------------
 /p  1 : B3 |　　　　　B
 /p  2 : 3C |　　　　⑧　①
@@ -337,7 +339,7 @@ const PHASES = [
 /p  8 : 2B |　　　　⑤　④
 /p    　　　　　　　　D
 /micon "B" Waymark` },
-      { name:"基準 C", icon:{label:"C",type:"C"}, key:"shift+c", raw:
+      { name:"基準 C", icon:{label:"C",type:"C"}, key:["shift+e","d"], raw:
 `/p -----------------------------------
 /p  1 : C4 |　　　　　C
 /p  2 : 4D |　　　　⑧　①
@@ -349,7 +351,7 @@ const PHASES = [
 /p  8 : 3C |　　　　⑤　④
 /p    　　　　　　　　A
 /micon "C" Waymark` },
-      { name:"基準 D", icon:{label:"D",type:"D"}, key:"shift+d", raw:
+      { name:"基準 D", icon:{label:"D",type:"D"}, key:["shift+r","f"], raw:
 `/p -----------------------------------
 /p  1 : D1 |　　　　　D
 /p  2 : 1A |　　　　⑧　①
@@ -361,7 +363,7 @@ const PHASES = [
 /p  8 : 4D |　　　　⑤　④
 /p    　　　　　　　　B
 /micon "D" Waymark` },
-      { name:"基準 1", icon:{label:"1",type:"1"}, key:"shift+1", raw:
+      { name:"基準 1", icon:{label:"1",type:"1"}, key:["shift+1","z"], raw:
 `/p -----------------------------------
 /p  1 : 1A |　　　　　1
 /p  2 : A2 |　　　　⑧　①
@@ -373,7 +375,7 @@ const PHASES = [
 /p  8 : D1 |　　　　⑤　④
 /p    　　　　　　　　3
 /micon "1" Waymark` },
-      { name:"基準 2", icon:{label:"2",type:"2"}, key:"shift+2", raw:
+      { name:"基準 2", icon:{label:"2",type:"2"}, key:["shift+2","x"], raw:
 `/p -----------------------------------
 /p  1 : 2B |　　　　　2
 /p  2 : B3 |　　　　⑧　①
@@ -385,7 +387,7 @@ const PHASES = [
 /p  8 : A2 |　　　　⑤　④
 /p    　　　　　　　　4
 /micon "2" Waymark` },
-      { name:"基準 3", icon:{label:"3",type:"3"}, key:"shift+3", raw:
+      { name:"基準 3", icon:{label:"3",type:"3"}, key:["shift+3","c"], raw:
 `/p -----------------------------------
 /p  1 : 3C |　　　　　3
 /p  2 : C4 |　　　　⑧　①
@@ -397,7 +399,7 @@ const PHASES = [
 /p  8 : B3 |　　　　⑤　④
 /p    　　　　　　　　1
 /micon "3" Waymark` },
-      { name:"基準 4", icon:{label:"4",type:"4"}, key:"shift+4", raw:
+      { name:"基準 4", icon:{label:"4",type:"4"}, key:["shift+4","v"], raw:
 `/p -----------------------------------
 /p  1 : 4D |　　　　　4
 /p  2 : D1 |　　　　⑧　①
@@ -554,12 +556,13 @@ function renderBars(phase){
     g.macros.forEach(m=>{
       const slot=document.createElement("button");
       slot.className="slot"; slot.type="button";
-      slot.title=m.key?`${m.name}（鍵盤：${keyLabel(m.key)}）`:m.name;
+      const keys=m.key?(Array.isArray(m.key)?m.key:[m.key]):[];
+      slot.title=keys.length?`${m.name}（鍵盤：${keys.map(keyLabel).join(" / ")}）`:m.name;
       const icl=String(m.icon.label).length>2?"icon sm":"icon";
       slot.innerHTML=`<span class="${icl} ic-${m.icon.type}">${escapeHtml(m.icon.label)}</span><span class="name">${escapeHtml(m.name)}</span>`
-        +(m.key?`<span class="key">${escapeHtml(keyLabel(m.key))}</span>`:"");
+        +(keys.length?`<span class="key">${escapeHtml(keys.map(keyLabel).join("·"))}</span>`:"");
       slot.onclick=()=>runMacro(m,slot);
-      if(m.key) keyMap.push({spec:parseKey(m.key),macro:m,slot});
+      keys.forEach(k=>keyMap.push({spec:parseKey(k),macro:m,slot}));
       bar.appendChild(slot);
     });
     wrap.appendChild(bar);
