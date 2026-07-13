@@ -217,54 +217,6 @@ const PHASES = [
 
   { id:"p3a", label:"P3前", groups:[
     { label:"究極破壞光（アルテマブラスター）", note:"凱夫卡順時針／骰子逆時針（選好基準再按下）", cols:4, macros:[
-      { name:"基準 A", icon:{label:"A",type:"A"}, key:"q", raw:
-`/p -----------------------------------
-/p  1 : A1 |　　　　　A
-/p  2 : 1D |　　　　①　⑧
-/p  3 : D4 |　　　１　　　２
-/p  4 : 4C |　　②　　　　　⑦
-/p  5 : C3 |　D　　　　　　　B
-/p  6 : 3B |　　③　　　　　⑥
-/p  7 : B2 |　　　４　　　３
-/p  8 : 2A |　　　　④　⑤
-/p    　　　　　　　　C
-/micon "A" Waymark` },
-      { name:"基準 B", icon:{label:"B",type:"B"}, key:"w", raw:
-`/p -----------------------------------
-/p  1 : B2 |　　　　　Ｂ
-/p  2 : 2A |　　　　①　⑧
-/p  3 : A1 |　　　２　　　３
-/p  4 : 1D |　　②　　　　　⑦
-/p  5 : D4 |　Ａ　　　　　　　Ｃ
-/p  6 : 4C |　　③　　　　　⑥
-/p  7 : C3 |　　　１　　　４
-/p  8 : 3B |　　　　④　⑤
-/p    　　　　　　　　Ｄ
-/micon "B" Waymark` },
-      { name:"基準 C", icon:{label:"C",type:"C"}, key:"e", raw:
-`/p -----------------------------------
-/p  1 : C3 |　　　　　Ｃ
-/p  2 : 3B |　　　　①　⑧
-/p  3 : B2 |　　　３　　　４
-/p  4 : 2A |　　②　　　　　⑦
-/p  5 : A1 |　Ｂ　　　　　　　Ｄ
-/p  6 : 1D |　　③　　　　　⑥
-/p  7 : D4 |　　　２　　　1
-/p  8 : 4C |　　　　④　⑤
-/p    　　　　　　　　Ａ
-/micon "C" Waymark` },
-      { name:"基準 D", icon:{label:"D",type:"D"}, key:"r", raw:
-`/p -----------------------------------
-/p  1 : D4 |　　　　　Ｄ
-/p  2 : 4C |　　　　①　⑧
-/p  3 : C3 |　　　４　　　１
-/p  4 : 3B |　　②　　　　　⑦
-/p  5 : B2 |　Ｃ　　　　　　　Ａ
-/p  6 : 2A |　　③　　　　　⑥
-/p  7 : A1 |　　　３　　　２
-/p  8 : 1D |　　　　④　⑤
-/p    　　　　　　　　Ｂ
-/micon "D" Waymark` },
       { name:"基準 1", icon:{label:"1",type:"1"}, key:"1", raw:
 `/p -----------------------------------
 /p  1 : 1D |　　　　　１
@@ -312,58 +264,58 @@ const PHASES = [
 /p  7 : 1D |　　　Ｂ　　　Ａ
 /p  8 : D4 |　　　　④　⑤
 /p    　　　　　　　　２
-/micon "4" Waymark` }
-    ]},
-    { label:"究極破壞光（アルテマブラスター）", note:"凱夫卡逆時針／骰子順時針", cols:4, macros:[
-      { name:"基準 A", icon:{label:"A",type:"A"}, key:["shift+q","a"], raw:
+/micon "4" Waymark` },
+      { name:"基準 A", icon:{label:"A",type:"A"}, key:"q", raw:
 `/p -----------------------------------
-/p  1 : A2 |　　　　　A
-/p  2 : 2B |　　　　⑧　①
-/p  3 : B3 |　　　１　　　２
-/p  4 : 3C |　　⑦　　　　　②
-/p  5 : C4 |　D　　　　　　　B
-/p  6 : 4D |　　⑥　　　　　③
-/p  7 : D1 |　　　４　　　３
-/p  8 : 1A |　　　　⑤　④
+/p  1 : A1 |　　　　　A
+/p  2 : 1D |　　　　①　⑧
+/p  3 : D4 |　　　１　　　２
+/p  4 : 4C |　　②　　　　　⑦
+/p  5 : C3 |　D　　　　　　　B
+/p  6 : 3B |　　③　　　　　⑥
+/p  7 : B2 |　　　４　　　３
+/p  8 : 2A |　　　　④　⑤
 /p    　　　　　　　　C
 /micon "A" Waymark` },
-      { name:"基準 B", icon:{label:"B",type:"B"}, key:["shift+w","s"], raw:
+      { name:"基準 B", icon:{label:"B",type:"B"}, key:"w", raw:
 `/p -----------------------------------
-/p  1 : B3 |　　　　　B
-/p  2 : 3C |　　　　⑧　①
-/p  3 : C4 |　　　2　　　3
-/p  4 : 4D |　　⑦　　　　　②
-/p  5 : D1 |　A　　　　　　　C
-/p  6 : 1A |　　⑥　　　　　③
-/p  7 : A2 |　　　1　　　4
-/p  8 : 2B |　　　　⑤　④
-/p    　　　　　　　　D
+/p  1 : B2 |　　　　　Ｂ
+/p  2 : 2A |　　　　①　⑧
+/p  3 : A1 |　　　２　　　３
+/p  4 : 1D |　　②　　　　　⑦
+/p  5 : D4 |　Ａ　　　　　　　Ｃ
+/p  6 : 4C |　　③　　　　　⑥
+/p  7 : C3 |　　　１　　　４
+/p  8 : 3B |　　　　④　⑤
+/p    　　　　　　　　Ｄ
 /micon "B" Waymark` },
-      { name:"基準 C", icon:{label:"C",type:"C"}, key:["shift+e","d"], raw:
+      { name:"基準 C", icon:{label:"C",type:"C"}, key:"e", raw:
 `/p -----------------------------------
-/p  1 : C4 |　　　　　C
-/p  2 : 4D |　　　　⑧　①
-/p  3 : D1 |　　　3　　　4
-/p  4 : 1A |　　⑦　　　　　②
-/p  5 : A2 |　B　　　　　　　D
-/p  6 : 2B |　　⑥　　　　　③
-/p  7 : B3 |　　　2　　　1
-/p  8 : 3C |　　　　⑤　④
-/p    　　　　　　　　A
+/p  1 : C3 |　　　　　Ｃ
+/p  2 : 3B |　　　　①　⑧
+/p  3 : B2 |　　　３　　　４
+/p  4 : 2A |　　②　　　　　⑦
+/p  5 : A1 |　Ｂ　　　　　　　Ｄ
+/p  6 : 1D |　　③　　　　　⑥
+/p  7 : D4 |　　　２　　　1
+/p  8 : 4C |　　　　④　⑤
+/p    　　　　　　　　Ａ
 /micon "C" Waymark` },
-      { name:"基準 D", icon:{label:"D",type:"D"}, key:["shift+r","f"], raw:
+      { name:"基準 D", icon:{label:"D",type:"D"}, key:"r", raw:
 `/p -----------------------------------
-/p  1 : D1 |　　　　　D
-/p  2 : 1A |　　　　⑧　①
-/p  3 : A2 |　　　4　　　1
-/p  4 : 2B |　　⑦　　　　　②
-/p  5 : B3 |　C　　　　　　　A
-/p  6 : 3C |　　⑥　　　　　③
-/p  7 : C4 |　　　3　　　2
-/p  8 : 4D |　　　　⑤　④
-/p    　　　　　　　　B
-/micon "D" Waymark` },
-      { name:"基準 1", icon:{label:"1",type:"1"}, key:["shift+1","z"], raw:
+/p  1 : D4 |　　　　　Ｄ
+/p  2 : 4C |　　　　①　⑧
+/p  3 : C3 |　　　４　　　１
+/p  4 : 3B |　　②　　　　　⑦
+/p  5 : B2 |　Ｃ　　　　　　　Ａ
+/p  6 : 2A |　　③　　　　　⑥
+/p  7 : A1 |　　　３　　　２
+/p  8 : 1D |　　　　④　⑤
+/p    　　　　　　　　Ｂ
+/micon "D" Waymark` }
+    ]},
+    { label:"究極破壞光（アルテマブラスター）", note:"凱夫卡逆時針／骰子順時針", cols:4, macros:[
+      { name:"基準 1", icon:{label:"1",type:"1"}, key:["shift+1","a"], raw:
 `/p -----------------------------------
 /p  1 : 1A |　　　　　1
 /p  2 : A2 |　　　　⑧　①
@@ -375,7 +327,7 @@ const PHASES = [
 /p  8 : D1 |　　　　⑤　④
 /p    　　　　　　　　3
 /micon "1" Waymark` },
-      { name:"基準 2", icon:{label:"2",type:"2"}, key:["shift+2","x"], raw:
+      { name:"基準 2", icon:{label:"2",type:"2"}, key:["shift+2","s"], raw:
 `/p -----------------------------------
 /p  1 : 2B |　　　　　2
 /p  2 : B3 |　　　　⑧　①
@@ -387,7 +339,7 @@ const PHASES = [
 /p  8 : A2 |　　　　⑤　④
 /p    　　　　　　　　4
 /micon "2" Waymark` },
-      { name:"基準 3", icon:{label:"3",type:"3"}, key:["shift+3","c"], raw:
+      { name:"基準 3", icon:{label:"3",type:"3"}, key:["shift+3","d"], raw:
 `/p -----------------------------------
 /p  1 : 3C |　　　　　3
 /p  2 : C4 |　　　　⑧　①
@@ -399,7 +351,7 @@ const PHASES = [
 /p  8 : B3 |　　　　⑤　④
 /p    　　　　　　　　1
 /micon "3" Waymark` },
-      { name:"基準 4", icon:{label:"4",type:"4"}, key:["shift+4","v"], raw:
+      { name:"基準 4", icon:{label:"4",type:"4"}, key:["shift+4","f"], raw:
 `/p -----------------------------------
 /p  1 : 4D |　　　　　4
 /p  2 : D1 |　　　　⑧　①
@@ -410,7 +362,55 @@ const PHASES = [
 /p  7 : 3C |　　　B　　　A
 /p  8 : C4 |　　　　⑤　④
 /p    　　　　　　　　2
-/micon "4" Waymark` }
+/micon "4" Waymark` },
+      { name:"基準 A", icon:{label:"A",type:"A"}, key:["shift+q","z"], raw:
+`/p -----------------------------------
+/p  1 : A2 |　　　　　A
+/p  2 : 2B |　　　　⑧　①
+/p  3 : B3 |　　　１　　　２
+/p  4 : 3C |　　⑦　　　　　②
+/p  5 : C4 |　D　　　　　　　B
+/p  6 : 4D |　　⑥　　　　　③
+/p  7 : D1 |　　　４　　　３
+/p  8 : 1A |　　　　⑤　④
+/p    　　　　　　　　C
+/micon "A" Waymark` },
+      { name:"基準 B", icon:{label:"B",type:"B"}, key:["shift+w","x"], raw:
+`/p -----------------------------------
+/p  1 : B3 |　　　　　B
+/p  2 : 3C |　　　　⑧　①
+/p  3 : C4 |　　　2　　　3
+/p  4 : 4D |　　⑦　　　　　②
+/p  5 : D1 |　A　　　　　　　C
+/p  6 : 1A |　　⑥　　　　　③
+/p  7 : A2 |　　　1　　　4
+/p  8 : 2B |　　　　⑤　④
+/p    　　　　　　　　D
+/micon "B" Waymark` },
+      { name:"基準 C", icon:{label:"C",type:"C"}, key:["shift+e","c"], raw:
+`/p -----------------------------------
+/p  1 : C4 |　　　　　C
+/p  2 : 4D |　　　　⑧　①
+/p  3 : D1 |　　　3　　　4
+/p  4 : 1A |　　⑦　　　　　②
+/p  5 : A2 |　B　　　　　　　D
+/p  6 : 2B |　　⑥　　　　　③
+/p  7 : B3 |　　　2　　　1
+/p  8 : 3C |　　　　⑤　④
+/p    　　　　　　　　A
+/micon "C" Waymark` },
+      { name:"基準 D", icon:{label:"D",type:"D"}, key:["shift+r","v"], raw:
+`/p -----------------------------------
+/p  1 : D1 |　　　　　D
+/p  2 : 1A |　　　　⑧　①
+/p  3 : A2 |　　　4　　　1
+/p  4 : 2B |　　⑦　　　　　②
+/p  5 : B3 |　C　　　　　　　A
+/p  6 : 3C |　　⑥　　　　　③
+/p  7 : C4 |　　　3　　　2
+/p  8 : 4D |　　　　⑤　④
+/p    　　　　　　　　B
+/micon "D" Waymark` }
     ]}
   ]},
 
