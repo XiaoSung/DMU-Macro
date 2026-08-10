@@ -110,6 +110,8 @@
   .ic-C,.ic-3{background:radial-gradient(circle at 35% 30%,#8fcbf4,var(--blue))}
   .ic-D,.ic-4{background:radial-gradient(circle at 35% 30%,#cca0f4,var(--purple))}
   .ic-ref{background:radial-gradient(circle at 35% 30%,#9be3d2,var(--teal))}
+  .ic-ok{background:radial-gradient(circle at 35% 30%,#a8e6a0,#4ea85e)}
+  .ic-ng{background:radial-gradient(circle at 35% 30%,#d6d6d6,#6b7280)}
   .slot .name{font-size:11px;line-height:1.25;color:var(--muted)}
   .slot:hover .name{color:var(--text)}
   .slot .key{
@@ -151,6 +153,19 @@
   .img-fallback{color:var(--muted);font-style:italic}
   .img-fallback a{color:var(--cyan)}
   .empty{color:var(--muted);font-style:italic;white-space:normal}
+
+  /* P4 タイムライン：10 欄對位表。
+     原文靠半形空格對齊，那是照遊戲內字型 17 調的，網頁字型一定歪；
+     所以改成 grid 固定欄位，欄位歸屬寫在 macro.tl。 */
+  .tl-wrap{overflow-x:auto;margin:2px 0 4px;padding-bottom:2px}
+  .tl{display:grid;grid-template-columns:repeat(11,auto);width:max-content;font-size:13px;line-height:1.5}
+  .tl-c{padding:2px 5px;text-align:center;white-space:nowrap;color:var(--cyan)}
+  .tl-c.pre{color:var(--cyan-dim);text-align:left;padding:2px 8px 2px 0}
+  .tl-c.sep{border-right:1px solid #3a4a70}
+  .tl-c.h1{color:var(--muted);font-size:12px}
+  .tl-c.h2{color:var(--gold-soft);font-weight:700}
+  .tl-c.rule{padding:0;height:0;border-bottom:1px solid #3a4a70;margin:3px 0}
+  .tl-c.val{font-weight:700;animation:fade .16s ease}
 
   /* 全寬特例：寬度=整個頁面內容區，置於熱鍵列上方，不影響按鈕排版 */
   .wideview{display:none;margin:0 0 18px}
@@ -201,6 +216,12 @@
    icon : {label, type}  type 對應顏色 (A B C D 1 2 3 4 / ref)
    raw  : 宏原文（含 /p /micon 等），引擎會自行解析。
    image: {src, alt}  —— 按下時把圖片貼進聊天（可與 raw 並用）。
+   tl   : P4 時間軸專用。"head" ＝印出表頭；物件 ＝往表下疊一行，
+          key 用 TL_COLS 的 k（we/aew/aeg/g1/fire/wl/alw/alg/g2/tsu）。
+          有 tl 的宏，raw 只作為遊戲內原文保存、不參與渲染。
+   clearFirst : 預設 true —— 按下時先清空聊天（模擬 /clear），FF14 一般宏的行為。
+          設成 false ＝「累加式」宏：不清空，直接往現有內容下方疊加。
+          用在 P4 時間軸這種「開始鍵印表頭、之後每按一次疊一行」的宏。
    key  : 鍵盤快捷鍵，如 "q"、"3"、"shift+q"（可加 ctrl/alt/shift）；
           給陣列＝同一顆多重鍵位，如 ["shift+q","a"]。
           只在該分頁顯示中時生效，會顯示在按鈕左上角。
@@ -419,6 +440,29 @@ const PHASES = [
       { name:"全程圖", icon:{label:"\u56F3",type:"ref"},
         image:{ src:"P3.jpg", wide:true, alt:"P3\u5F8C\u534A \u9023\u7DDA\u5168\u7A0B\u5716" } }
     ]}
+  ]},
+
+  /* P4 \u6642\u9593\u8EF8\u5B8F \u2014\u2014 \u51FA\u81EA Shyna Lynn\u300C\u7D76\u5996\u661F\u4E71\u821E P4 \u30BF\u30A4\u30E0\u30E9\u30A4\u30F3\u30DE\u30AF\u30ED\u300D
+     https://jp.finalfantasyxiv.com/lodestone/character/29733668/blog/5699342/
+     \u7D2F\u52A0\u5F0F\uFF1A\u958B\u59CB\u9375\u5370\u8868\u982D\uFF0C\u4E4B\u5F8C\u6BCF\u6309\u4E00\u6B21\u5F80\u8868\u4E0B\u758A\u4E00\u884C\u3002
+     raw \u70BA\u904A\u6232\u5167\u539F\u6587\u9010\u5B57\u4FDD\u5B58\uFF08\u7A7A\u683C\u7167\u539F\u6A23\uFF09\uFF0C\u5BE6\u969B\u6E32\u67D3\u770B tl\u3002 */
+  { id:"p4", label:"P4", groups:[
+    { label:"\u6642\u9593\u8EF8 \u2014 \u958B\u59CB", note:"P4 \u4E00\u958B\u59CB\u6309\u4E00\u6B21\uFF0C\u5370\u51FA\u8868\u982D\uFF08\u539F\u6587\u5E36 /cl\uFF0C\u6703\u6E05\u7A7A\uFF09", macros:[
+      { name:"\u958B\u59CB", icon:{label:"\u25B6",type:"ref"}, key:"0", tl:"head", raw:
+`/cl
+/p ------------------------------------------------------------------------------------------------------
+/p                  \u65E9\u52A0\u901F    |              |          |                   \u9045\u52A0\u901F     |             |   
+/p \u65E9\u6C34\u96F7   \u6C34\u96F7   \u8996\u7DDA |   \u8996\u7DDA1 |   \u708E   |   \u9045\u6C34\u96F7   \u6C34\u96F7   \u8996\u7DDA |  \u8996\u7DDA2 |  \u3064\u306A\u307F 
+/p ------------------------------------------------------------------------------------------------------` }
+    ]},
+    { label:"\u2460 \u8996\u7DDA1\uFF08GC1\uFF09", note:"\u770B GC1 \u7279\u6548\u6309 \u2014 \u5B9A\u4E0B \u65E9\u8996\u7DDA\u30FB\u65E9\u8996\u7DDA\u52A0\u901F\u5F48\u30FB\u9072\u6C34\u96F7\u52A0\u901F\u5F48", cols:2, macros:[
+      { name:"\u672C\u5F53", icon:{label:"\u25CB",type:"ok"}, key:"z", clearFirst:false,
+        tl:{ aeg:"\u6B62", g1:"\u898B\u306A\u3044", alw:"\u6B62" }, raw:
+`/p                           \u6B62  |  \u898B\u306A\u3044  |          |                   \u6B62            |            |         ` },
+      { name:"\u5618", icon:{label:"\u00D7",type:"ng"}, key:"x", clearFirst:false,
+        tl:{ aeg:"\u52D5\u304F", g1:"\u898B\u308B", alw:"\u52D5\u304F" }, raw:
+`/p                         \u52D5\u304F |   \u898B\u308B    |          |                \u52D5\u304F           |             |         ` }
+    ]}
   ]}
 ];
 
@@ -441,7 +485,8 @@ function parseMacro(raw){
       const p=line.split(/\s+/);
       steps.push({type:"system",text:`マーカー設置: ${p[1]||""}（自分）`});
     }
-    // /micon /mlock は出力なし
+    // /micon /mlock /cl /clear は出力なし
+    //   ※ /cl の「清空」動作は macro.clearFirst（預設 true）負責，不在這裡處理
   });
   return steps;
 }
@@ -464,6 +509,62 @@ function appendImage(img){
     el.replaceWith(f); logEl.scrollTop=logEl.scrollHeight;
   };
   logEl.appendChild(el); logEl.scrollTop=logEl.scrollHeight;
+}
+
+/* ---------- P4 時間軸：10 欄對位渲染 ----------
+   sep:true ＝該欄右側畫分隔線，對應原文的 "|"。
+   w ＝該欄最小寬度（em，約等於幾個全形字）。 */
+const TL_COLS=[
+  {k:"we",  label:"早水雷", w:3},
+  {k:"aew", label:"水雷",   w:2},
+  {k:"aeg", label:"視線",   w:2, sep:true},
+  {k:"g1",  label:"視線1",  w:3, sep:true},
+  {k:"fire",label:"炎",     w:2, sep:true},
+  {k:"wl",  label:"遅水雷", w:3},
+  {k:"alw", label:"水雷",   w:2},
+  {k:"alg", label:"視線",   w:2, sep:true},
+  {k:"g2",  label:"視線2",  w:3, sep:true},
+  {k:"tsu", label:"つなみ", w:3}
+];
+function tlGrid(){
+  let g=logEl.querySelector(".tl");
+  if(!g){
+    clearEmpty();
+    const w=document.createElement("div"); w.className="tl-wrap";
+    g=document.createElement("div"); g.className="tl";
+    w.appendChild(g); logEl.appendChild(w);
+  }
+  return g;
+}
+function tlCell(g,text,cls,col,span){
+  const d=document.createElement("div");
+  d.className="tl-c"+(cls?" "+cls:"")+(col&&col.sep?" sep":"");
+  if(col) d.style.minWidth=col.w+"em";
+  if(span) d.style.gridColumn="span "+span;
+  d.textContent=text||"";
+  g.appendChild(d); return d;
+}
+function tlRule(){ const g=tlGrid(); tlCell(g,"[1]","pre"); tlCell(g,"","rule",null,TL_COLS.length); }
+function tlRow(cells,cls){
+  const g=tlGrid(); tlCell(g,"[1]","pre");
+  TL_COLS.forEach(c=>tlCell(g,cells[c.k],cls,c));
+  logEl.scrollTop=logEl.scrollHeight;
+}
+function tlHeader(){
+  tlRule();
+  const g=tlGrid();
+  // 上層跨欄標題：早加速／遅加速 各蓋住「水雷・視線」兩欄
+  tlCell(g,"[1]","pre");
+  tlCell(g,"","h1",TL_COLS[0]);
+  tlCell(g,"早加速","h1 sep",null,2);
+  tlCell(g,"","h1",TL_COLS[3]);
+  tlCell(g,"","h1",TL_COLS[4]);
+  tlCell(g,"","h1",TL_COLS[5]);
+  tlCell(g,"遅加速","h1 sep",null,2);
+  tlCell(g,"","h1",TL_COLS[8]);
+  tlCell(g,"","h1",TL_COLS[9]);
+  tlRow(Object.fromEntries(TL_COLS.map(c=>[c.k,c.label])),"h2");
+  tlRule();
 }
 
 function clearLog(){
@@ -493,12 +594,17 @@ function flashSlot(slot){ slot.classList.add("running"); setTimeout(()=>slot.cla
 
 function runMacro(macro,slot){
   flashSlot(slot);
-  clearLog();   // /clear：每個宏開頭先清空對話框
+  // 預設每個宏開頭先清空對話框（模擬 /clear）；clearFirst:false ＝累加式，往下疊加
+  if(macro.clearFirst !== false) clearLog();
   if(macro.image){
     if(macro.image.wide) showWide(macro.image);
     else appendImage(macro.image);
   }
-  if(macro.raw){
+  if(macro.tl){
+    // P4 時間軸：走欄位化渲染，raw 只是原文保存
+    if(macro.tl==="head") tlHeader();
+    else tlRow(macro.tl,"val");
+  } else if(macro.raw){
     parseMacro(macro.raw).forEach(s=>{
       if(s.type==="chat") appendLine(renderChips(s.text)||"&nbsp;","party");
       else if(s.type==="system") appendLine(escapeHtml(s.text),"system");
