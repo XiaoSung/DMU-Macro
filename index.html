@@ -158,9 +158,8 @@
      原文靠半形空格對齊，那是照遊戲內字型 17 調的，網頁字型一定歪；
      所以改成 grid 固定欄位，欄位歸屬寫在 macro.tl。 */
   .tl-wrap{overflow-x:auto;margin:2px 0 4px;padding-bottom:2px}
-  .tl{display:grid;grid-template-columns:repeat(11,auto);width:max-content;font-size:13px;line-height:1.5}
+  .tl{display:grid;grid-template-columns:repeat(10,auto);width:max-content;font-size:13px;line-height:1.5}
   .tl-c{padding:2px 5px;text-align:center;white-space:nowrap;color:var(--cyan)}
-  .tl-c.pre{color:var(--cyan-dim);text-align:left;padding:2px 8px 2px 0}
   .tl-c.sep{border-right:1px solid #3a4a70}
   .tl-c.h1{color:var(--muted);font-size:12px}
   .tl-c.h2{color:var(--gold-soft);font-weight:700}
@@ -455,13 +454,52 @@ const PHASES = [
 /p \u65E9\u6C34\u96F7   \u6C34\u96F7   \u8996\u7DDA |   \u8996\u7DDA1 |   \u708E   |   \u9045\u6C34\u96F7   \u6C34\u96F7   \u8996\u7DDA |  \u8996\u7DDA2 |  \u3064\u306A\u307F 
 /p ------------------------------------------------------------------------------------------------------` }
     ]},
-    { label:"\u2460 \u8996\u7DDA1\uFF08GC1\uFF09", note:"\u770B GC1 \u7279\u6548\u6309 \u2014 \u5B9A\u4E0B \u65E9\u8996\u7DDA\u30FB\u65E9\u8996\u7DDA\u52A0\u901F\u5F48\u30FB\u9072\u6C34\u96F7\u52A0\u901F\u5F48", cols:2, macros:[
+    { label:"\u2460 \u8996\u7DDA1\uFF08GC1\uFF09", note:"\u7B2C1\u6309\uFF1A\u770B GC1 \u7279\u6548 \u2014 \u5B9A\u4E0B \u65E9\u8996\u7DDA\u30FB\u65E9\u8996\u7DDA\u52A0\u901F\u5F48\u30FB\u9072\u6C34\u96F7\u52A0\u901F\u5F48", cols:2, macros:[
       { name:"\u672C\u5F53", icon:{label:"\u25CB",type:"ok"}, key:"z", clearFirst:false,
         tl:{ aeg:"\u6B62", g1:"\u898B\u306A\u3044", alw:"\u6B62" }, raw:
 `/p                           \u6B62  |  \u898B\u306A\u3044  |          |                   \u6B62            |            |         ` },
       { name:"\u5618", icon:{label:"\u00D7",type:"ng"}, key:"x", clearFirst:false,
         tl:{ aeg:"\u52D5\u304F", g1:"\u898B\u308B", alw:"\u52D5\u304F" }, raw:
 `/p                         \u52D5\u304F |   \u898B\u308B    |          |                \u52D5\u304F           |             |         ` }
+    ]},
+    { label:"② 炎・つなみ（カオス）", note:"第2按：看カオス特效＋敵視列表技名，按 炎 或 つなみ 的真偽；第6按：另一邊（上次沒按的）", cols:4, macros:[
+      { name:"炎 本当", icon:{label:"炎",type:"ok"}, key:"c", clearFirst:false,
+        tl:{ fire:"本当" }, raw:
+`/p                                 |              | 本当 |                                   |            |         
+/micon ファイア` },
+      { name:"炎 嘘", icon:{label:"炎",type:"ng"}, key:"v", clearFirst:false,
+        tl:{ fire:"嘘" }, raw:
+`/p                                 |              |   嘘   |                                   |            |         ` },
+      { name:"つなみ 本当", icon:{label:"波",type:"ok"}, key:"b", clearFirst:false,
+        tl:{ tsu:"本当" }, raw:
+`/p                                 |              |          |                                   |            |  本当
+/micon 水遁の術` },
+      { name:"つなみ 嘘", icon:{label:"波",type:"ng"}, key:"n", clearFirst:false,
+        tl:{ tsu:"嘘" }, raw:
+`/p                                 |              |          |                                   |            |   嘘` }
+    ]},
+    { label:"③ 早遅水雷", note:"第3按：GC1 著彈後看水雷剩秒（約40〜50秒＝早水雷、約1分＝遅水雷）；第5按：另一邊，不必等著彈", cols:4, macros:[
+      { name:"早水雷 本当", icon:{label:"早",type:"ok"}, key:"a", clearFirst:false,
+        tl:{ we:"本当" }, raw:
+`/p  本当                        |              |          |                                   |            |         
+/micon スプリント general` },
+      { name:"早水雷 嘘", icon:{label:"早",type:"ng"}, key:"s", clearFirst:false,
+        tl:{ we:"嘘" }, raw:
+`/p   嘘                          |              |          |                                   |            |         ` },
+      { name:"遅水雷 本当", icon:{label:"遅",type:"ok"}, key:"d", clearFirst:false,
+        tl:{ wl:"本当" }, raw:
+`/p                                 |              |          |  本当                          |            |         ` },
+      { name:"遅水雷 嘘", icon:{label:"遅",type:"ng"}, key:"f", clearFirst:false,
+        tl:{ wl:"嘘" }, raw:
+`/p                                 |              |          |    嘘                           |            |         ` }
+    ]},
+    { label:"④ 視線2（GC2）", note:"第4按：看 GC2 特效 — 定下 遲視線・遲視線加速彈・早水雷加速彈", cols:2, macros:[
+      { name:"本当", icon:{label:"○",type:"ok"}, key:"q", clearFirst:false,
+        tl:{ aew:"止", alg:"止", g2:"見ない" }, raw:
+`/p                 止            |              |          |                             止  | 見ない |         ` },
+      { name:"嘘", icon:{label:"×",type:"ng"}, key:"w", clearFirst:false,
+        tl:{ aew:"動く", alg:"動く", g2:"見る" }, raw:
+`/p               動く           |              |          |                          動く |   見る   |         ` }
     ]}
   ]}
 ];
@@ -544,9 +582,9 @@ function tlCell(g,text,cls,col,span){
   d.textContent=text||"";
   g.appendChild(d); return d;
 }
-function tlRule(){ const g=tlGrid(); tlCell(g,"[1]","pre"); tlCell(g,"","rule",null,TL_COLS.length); }
+function tlRule(){ const g=tlGrid(); tlCell(g,"","rule",null,TL_COLS.length); }
 function tlRow(cells,cls){
-  const g=tlGrid(); tlCell(g,"[1]","pre");
+  const g=tlGrid();
   TL_COLS.forEach(c=>tlCell(g,cells[c.k],cls,c));
   logEl.scrollTop=logEl.scrollHeight;
 }
@@ -554,7 +592,6 @@ function tlHeader(){
   tlRule();
   const g=tlGrid();
   // 上層跨欄標題：早加速／遅加速 各蓋住「水雷・視線」兩欄
-  tlCell(g,"[1]","pre");
   tlCell(g,"","h1",TL_COLS[0]);
   tlCell(g,"早加速","h1 sep",null,2);
   tlCell(g,"","h1",TL_COLS[3]);
