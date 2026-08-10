@@ -97,6 +97,9 @@
   .slot:active{transform:translateY(0)}
   .slot:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   .slot.running{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset,0 0 22px rgba(201,168,106,.5)}
+  /* when() 判定為不可能的按鈕：留在原位變灰，不重排版面 */
+  .slot:disabled{opacity:.24;filter:grayscale(.8);cursor:not-allowed}
+  .slot:disabled:hover{border-color:var(--border);box-shadow:none;transform:none}
 
   .icon{
     width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;
@@ -226,8 +229,31 @@
    key  : 鍵盤快捷鍵，如 "q"、"3"、"shift+q"（可加 ctrl/alt/shift）；
           給陣列＝同一顆多重鍵位，如 ["shift+q","a"]。
           只在該分頁顯示中時生效，會顯示在按鈕左上角。
+   when : ()=>bool，回傳 false 時該按鈕變灰且按不下去（鍵盤也擋）。
+   sets : 執行後寫入 tlState。物件＝直接覆蓋；函式＝自訂（見 setOnce）。
    群組屬性 cols:4 —— 該組按鈕固定 4 欄排列（8 顆＝上下兩排）。
    ============================================================ */
+
+/* ---------- P4 時間軸狀態：用來鎖住不可能的按鈕 ----------
+   gc1 / gc2   ：兩次大十字的真假（true＝真）
+   waterFirst  ：③ 已經按掉哪一欄（"we"＝早／"wl"＝晚）
+   chaosFirst  ：② 已經按掉哪個機制（"fire"／"tsu"）
+   按「開始」（切 P4 分頁或按 0）會整組重置。 */
+let tlState={ gc1:null, gc2:null, waterFirst:null, chaosFirst:null };
+const setOnce=(k,v)=>s=>{ if(s[k]===null) s[k]=v; };   // 只寫第一次，第6/5按不覆蓋
+
+/* ③ 早晚水雷：第3按跟 GC1 的真假、第5按跟 GC2 的；按過的欄位直接鎖死。
+   注意：「水雷真假＝該次 GC 真假」是從 yan-flash 的用詞（GC1回目の真偽）推的，攻略沒明寫。
+   若實戰發現推錯，重按 ①／④ 的另一顆即可改判，或按 0 整組重置。 */
+function waterOK(col,truth){
+  const s=tlState;
+  if(s.waterFirst===null) return s.gc1===null || s.gc1===truth;   // 這是第3按
+  if(s.waterFirst===col)  return false;                            // 這欄填過了
+  return s.gc2===null || s.gc2===truth;                            // 這是第5按
+}
+/* ② 炎・海嘯：第2按兩種都行，第6按只剩另一種。真假各自獨立觀察，不過濾。 */
+function chaosOK(mech){ return tlState.chaosFirst===null || tlState.chaosFirst!==mech; }
+
 const PHASES = [
   { id:"p1", label:"P1", groups:[
     { label:"ずびずばテレポ", note:"混亂睡眠固定式 — 相同箭頭＝紅框／不同箭頭＝藍框", macros:[
@@ -457,49 +483,49 @@ const PHASES = [
 /p ------------------------------------------------------------------------------------------------------` }
     ]},
     { label:"\u2460 \u8996\u7DDA1\uFF08GC1\uFF09", note:"\u7B2C1\u6309\uFF1A\u770B GC1 \u7279\u6548 \u2014 \u5B9A\u4E0B \u65E9\u8996\u7DDA\u30FB\u65E9\u8996\u7DDA\u52A0\u901F\u5F48\u30FB\u665A\u6C34\u96F7\u52A0\u901F\u5F48", cols:2, macros:[
-      { name:"\u771F", icon:{label:"\u25CB",type:"ok"}, key:"z", clearFirst:false,
+      { name:"\u771F", icon:{label:"\u25CB",type:"ok"}, key:"z", clearFirst:false, sets:{gc1:true},
         tl:{ aeg:"\u505C", g1:"\u4E0D\u770B", alw:"\u505C" }, raw:
 `/p                           \u6B62  |  \u898B\u306A\u3044  |          |                   \u6B62            |            |         ` },
-      { name:"\u5047", icon:{label:"\u00D7",type:"ng"}, key:"x", clearFirst:false,
+      { name:"\u5047", icon:{label:"\u00D7",type:"ng"}, key:"x", clearFirst:false, sets:{gc1:false},
         tl:{ aeg:"\u52D5", g1:"\u770B", alw:"\u52D5" }, raw:
 `/p                         \u52D5\u304F |   \u898B\u308B    |          |                \u52D5\u304F           |             |         ` }
     ]},
-    { label:"② 炎・海嘯（混沌）", note:"第2按：看混沌特效＋仇恨列表技能名，按 炎 或 海嘯 的真假；第6按：另一邊（上次沒按的）", cols:4, macros:[
-      { name:"炎 真", icon:{label:"炎",type:"ok"}, key:"c", clearFirst:false,
+    { label:"② 炎・海嘯（混沌）", note:"第2按：看混沌特效＋仇恨列表技能名，按 炎 或 海嘯 的真假；第6按：另一邊（按過的那邊會自動鎖住）", cols:4, macros:[
+      { name:"炎 真", icon:{label:"炎",type:"ok"}, key:"c", clearFirst:false, when:()=>chaosOK("fire"), sets:setOnce("chaosFirst","fire"),
         tl:{ fire:"真" }, raw:
 `/p                                 |              | 本当 |                                   |            |         
 /micon ファイア` },
-      { name:"炎 假", icon:{label:"炎",type:"ng"}, key:"v", clearFirst:false,
+      { name:"炎 假", icon:{label:"炎",type:"ng"}, key:"v", clearFirst:false, when:()=>chaosOK("fire"), sets:setOnce("chaosFirst","fire"),
         tl:{ fire:"假" }, raw:
 `/p                                 |              |   嘘   |                                   |            |         ` },
-      { name:"海嘯 真", icon:{label:"波",type:"ok"}, key:"b", clearFirst:false,
+      { name:"海嘯 真", icon:{label:"波",type:"ok"}, key:"b", clearFirst:false, when:()=>chaosOK("tsu"), sets:setOnce("chaosFirst","tsu"),
         tl:{ tsu:"真" }, raw:
 `/p                                 |              |          |                                   |            |  本当
 /micon 水遁の術` },
-      { name:"海嘯 假", icon:{label:"波",type:"ng"}, key:"n", clearFirst:false,
+      { name:"海嘯 假", icon:{label:"波",type:"ng"}, key:"n", clearFirst:false, when:()=>chaosOK("tsu"), sets:setOnce("chaosFirst","tsu"),
         tl:{ tsu:"假" }, raw:
 `/p                                 |              |          |                                   |            |   嘘` }
     ]},
-    { label:"③ 早晚水雷", note:"第3按：GC1 著彈後看水雷剩秒（約40〜50秒＝早水雷、約1分＝晚水雷）；第5按：另一邊，不必等著彈", cols:4, macros:[
-      { name:"早水雷 真", icon:{label:"早",type:"ok"}, key:"a", clearFirst:false,
+    { label:"③ 早晚水雷", note:"第3按：GC1 著彈後看水雷剩秒（約40〜50秒＝早水雷、約1分＝晚水雷）；第5按：另一邊，不必等著彈。真假跟著 ①／④ 自動鎖，第5按只會剩 1 顆", cols:4, macros:[
+      { name:"早水雷 真", icon:{label:"早",type:"ok"}, key:"a", clearFirst:false, when:()=>waterOK("we",true), sets:setOnce("waterFirst","we"),
         tl:{ we:"真" }, raw:
 `/p  本当                        |              |          |                                   |            |         
 /micon スプリント general` },
-      { name:"早水雷 假", icon:{label:"早",type:"ng"}, key:"s", clearFirst:false,
+      { name:"早水雷 假", icon:{label:"早",type:"ng"}, key:"s", clearFirst:false, when:()=>waterOK("we",false), sets:setOnce("waterFirst","we"),
         tl:{ we:"假" }, raw:
 `/p   嘘                          |              |          |                                   |            |         ` },
-      { name:"晚水雷 真", icon:{label:"晚",type:"ok"}, key:"d", clearFirst:false,
+      { name:"晚水雷 真", icon:{label:"晚",type:"ok"}, key:"d", clearFirst:false, when:()=>waterOK("wl",true), sets:setOnce("waterFirst","wl"),
         tl:{ wl:"真" }, raw:
 `/p                                 |              |          |  本当                          |            |         ` },
-      { name:"晚水雷 假", icon:{label:"晚",type:"ng"}, key:"f", clearFirst:false,
+      { name:"晚水雷 假", icon:{label:"晚",type:"ng"}, key:"f", clearFirst:false, when:()=>waterOK("wl",false), sets:setOnce("waterFirst","wl"),
         tl:{ wl:"假" }, raw:
 `/p                                 |              |          |    嘘                           |            |         ` }
     ]},
     { label:"④ 視線2（GC2）", note:"第4按：看 GC2 特效 — 定下 晚視線・晚視線加速彈・早水雷加速彈", cols:2, macros:[
-      { name:"真", icon:{label:"○",type:"ok"}, key:"q", clearFirst:false,
+      { name:"真", icon:{label:"○",type:"ok"}, key:"q", clearFirst:false, sets:{gc2:true},
         tl:{ aew:"停", alg:"停", g2:"不看" }, raw:
 `/p                 止            |              |          |                             止  | 見ない |         ` },
-      { name:"假", icon:{label:"×",type:"ng"}, key:"w", clearFirst:false,
+      { name:"假", icon:{label:"×",type:"ng"}, key:"w", clearFirst:false, sets:{gc2:false},
         tl:{ aew:"動", alg:"動", g2:"看" }, raw:
 `/p               動く           |              |          |                          動く |   見る   |         ` }
     ]}
@@ -634,9 +660,12 @@ function showWide(img){
 function flashSlot(slot){ if(!slot) return; slot.classList.add("running"); setTimeout(()=>slot.classList.remove("running"),320); }
 
 function runMacro(macro,slot){
+  if(macro.when && !macro.when()) return;   // 已鎖住：滑鼠被 disabled 擋，鍵盤在這裡擋
   flashSlot(slot);
   // 預設每個宏開頭先清空對話框（模擬 /clear）；clearFirst:false ＝累加式，往下疊加
   if(macro.clearFirst !== false) clearLog();
+  // 表頭＝一輪的開始，順便把鎖定狀態整組重置
+  if(macro.tl==="head") tlState={ gc1:null, gc2:null, waterFirst:null, chaosFirst:null };
   if(macro.image){
     if(macro.image.wide) showWide(macro.image);
     else appendImage(macro.image);
@@ -651,10 +680,20 @@ function runMacro(macro,slot){
       else if(s.type==="system") appendLine(escapeHtml(s.text),"system");
     });
   }
+  if(macro.sets){
+    if(typeof macro.sets==="function") macro.sets(tlState);
+    else Object.assign(tlState,macro.sets);
+  }
+  refreshSlots();
 }
 
 /* ---------- 鍵盤快捷鍵：macro.key（"a"、"shift+3"…），只對目前顯示的分頁生效 ---------- */
-let keyMap=[];   // renderBars 時重建：[{spec, macro, slot}]
+let keyMap=[];     // renderBars 時重建：[{spec, macro, slot}]
+let slotRefs=[];   // renderBars 時重建：[{macro, slot}]，refreshSlots 用它切鎖定狀態
+// 依 macro.when() 更新按鈕可按狀態。不能改用 renderBars 重畫——那會觸發 autorun 把表頭重印、時間軸整個清掉
+function refreshSlots(){
+  slotRefs.forEach(r=>{ if(r.slot && r.macro.when) r.slot.disabled = !r.macro.when(); });
+}
 function parseKey(spec){
   const parts=spec.toLowerCase().split("+"), key=parts.pop();
   let codes=[key];
@@ -691,7 +730,7 @@ function selectPhase(idx){
 }
 function renderBars(phase){
   barsEl.innerHTML="";
-  keyMap=[];
+  keyMap=[]; slotRefs=[];
   const auto=[];
   phase.groups.forEach(g=>{
     const wrap=document.createElement("div"); wrap.className="group";
@@ -714,11 +753,13 @@ function renderBars(phase){
         bar.appendChild(slot);
       }
       keys.forEach(k=>keyMap.push({spec:parseKey(k),macro:m,slot}));
+      slotRefs.push({macro:m,slot});
       if(m.autorun) auto.push({macro:m,slot});
     });
     if(bar.children.length){ wrap.appendChild(bar); barsEl.appendChild(wrap); }  // 整組都 hidden 就不畫這一組
   });
   auto.forEach(a=>runMacro(a.macro,a.slot));   // 切分頁時自動執行
+  refreshSlots();                              // 沒有 autorun 的分頁也要套一次
 }
 
 $("#clearBtn").onclick=()=>{ clearLog(); };
