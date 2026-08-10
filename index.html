@@ -218,6 +218,8 @@
    tl   : P4 時間軸專用。"head" ＝印出表頭；物件 ＝往表下疊一行，
           key 用 TL_COLS 的 k（we/aew/aeg/g1/fire/wl/alw/alg/g2/tsu）。
           有 tl 的宏，raw 只作為遊戲內原文保存、不參與渲染。
+   autorun : true ＝切到該分頁時自動執行一次（多顆會依出現順序全跑）。
+   hidden  : true ＝不畫按鈕，只靠 autorun／鍵盤觸發。整組都 hidden 時該組不顯示。
    clearFirst : 預設 true —— 按下時先清空聊天（模擬 /clear），FF14 一般宏的行為。
           設成 false ＝「累加式」宏：不清空，直接往現有內容下方疊加。
           用在 P4 時間軸這種「開始鍵印表頭、之後每按一次疊一行」的宏。
@@ -229,7 +231,7 @@
 const PHASES = [
   { id:"p1", label:"P1", groups:[
     { label:"ずびずばテレポ", note:"混亂睡眠固定式 — 相同箭頭＝紅框／不同箭頭＝藍框", macros:[
-      { name:"位置図", icon:{label:"\u21D5",type:"ref"},
+      { name:"位置図", icon:{label:"\u21D5",type:"ref"}, autorun:true,
         image:{ src:"https://yan-flash.com/api/uploads/1780476493649-398c3c2d.webp",
                 alt:"\u305A\u3073\u305A\u3070\u30C6\u30EC\u30DD \u4F4D\u7F6E\u56F3" } }
     ]}
@@ -436,7 +438,7 @@ const PHASES = [
 
   { id:"p3b", label:"P3後", groups:[
     { label:"黑洞（後半）", note:"連線全程對照圖", macros:[
-      { name:"全程圖", icon:{label:"\u56F3",type:"ref"},
+      { name:"全程圖", icon:{label:"\u56F3",type:"ref"}, autorun:true,
         image:{ src:"P3.jpg", wide:true, alt:"P3\u5F8C\u534A \u9023\u7DDA\u5168\u7A0B\u5716" } }
     ]}
   ]},
@@ -446,8 +448,8 @@ const PHASES = [
      \u7D2F\u52A0\u5F0F\uFF1A\u958B\u59CB\u9375\u5370\u8868\u982D\uFF0C\u4E4B\u5F8C\u6BCF\u6309\u4E00\u6B21\u5F80\u8868\u4E0B\u758A\u4E00\u884C\u3002
      raw \u70BA\u904A\u6232\u5167\u539F\u6587\u9010\u5B57\u4FDD\u5B58\uFF08\u7A7A\u683C\u7167\u539F\u6A23\uFF09\uFF0C\u5BE6\u969B\u6E32\u67D3\u770B tl\u3002 */
   { id:"p4", label:"P4", groups:[
-    { label:"\u6642\u9593\u8EF8 \u2014 \u958B\u59CB", note:"P4 \u4E00\u958B\u59CB\u6309\u4E00\u6B21\uFF0C\u5370\u51FA\u8868\u982D\uFF08\u539F\u6587\u5E36 /cl\uFF0C\u6703\u6E05\u7A7A\uFF09", macros:[
-      { name:"\u958B\u59CB", icon:{label:"\u25B6",type:"ref"}, key:"0", tl:"head", raw:
+    { label:"\u6642\u9593\u8EF8 \u2014 \u8868\u982D", note:"\u5207\u5230 P4 \u5206\u9801\u6642\u81EA\u52D5\u5370\u51FA\uFF0C\u4E0D\u986F\u793A\u6309\u9215\uFF1B\u9375\u76E4 0 \u6216\u91CD\u6309\u5206\u9801\u53EF\u91CD\u5370\uFF08\uFF1D\u91CD\u7F6E\u6642\u9593\u8EF8\uFF09", macros:[
+      { name:"\u958B\u59CB", icon:{label:"\u25B6",type:"ref"}, key:"0", autorun:true, hidden:true, tl:"head", raw:
 `/cl
 /p ------------------------------------------------------------------------------------------------------
 /p                  \u65E9\u52A0\u901F    |              |          |                   \u9045\u52A0\u901F     |             |   
@@ -628,7 +630,8 @@ function showWide(img){
   wideEl.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 
-function flashSlot(slot){ slot.classList.add("running"); setTimeout(()=>slot.classList.remove("running"),320); }
+// slot 可為 null（hidden 宏沒有按鈕，但仍可被 autorun／鍵盤觸發）
+function flashSlot(slot){ if(!slot) return; slot.classList.add("running"); setTimeout(()=>slot.classList.remove("running"),320); }
 
 function runMacro(macro,slot){
   flashSlot(slot);
@@ -689,7 +692,7 @@ function selectPhase(idx){
 function renderBars(phase){
   barsEl.innerHTML="";
   keyMap=[];
-  if(!phase.groups.length) return;
+  const auto=[];
   phase.groups.forEach(g=>{
     const wrap=document.createElement("div"); wrap.className="group";
     const lbl=document.createElement("div"); lbl.className="group-label";
@@ -698,20 +701,24 @@ function renderBars(phase){
     const bar=document.createElement("div"); bar.className="bar";
     if(g.cols){ bar.style.display="grid"; bar.style.gridTemplateColumns=`repeat(${g.cols},max-content)`; }
     g.macros.forEach(m=>{
-      const slot=document.createElement("button");
-      slot.className="slot"; slot.type="button";
       const keys=m.key?(Array.isArray(m.key)?m.key:[m.key]):[];
-      slot.title=keys.length?`${m.name}（鍵盤：${keys.map(keyLabel).join(" / ")}）`:m.name;
-      const icl=String(m.icon.label).length>2?"icon sm":"icon";
-      slot.innerHTML=`<span class="${icl} ic-${m.icon.type}">${escapeHtml(m.icon.label)}</span><span class="name">${escapeHtml(m.name)}</span>`
-        +(keys.length?`<span class="key">${escapeHtml(keys.map(keyLabel).join("·"))}</span>`:"");
-      slot.onclick=()=>runMacro(m,slot);
+      let slot=null;
+      if(!m.hidden){
+        slot=document.createElement("button");
+        slot.className="slot"; slot.type="button";
+        slot.title=keys.length?`${m.name}（鍵盤：${keys.map(keyLabel).join(" / ")}）`:m.name;
+        const icl=String(m.icon.label).length>2?"icon sm":"icon";
+        slot.innerHTML=`<span class="${icl} ic-${m.icon.type}">${escapeHtml(m.icon.label)}</span><span class="name">${escapeHtml(m.name)}</span>`
+          +(keys.length?`<span class="key">${escapeHtml(keys.map(keyLabel).join("·"))}</span>`:"");
+        slot.onclick=()=>runMacro(m,slot);
+        bar.appendChild(slot);
+      }
       keys.forEach(k=>keyMap.push({spec:parseKey(k),macro:m,slot}));
-      bar.appendChild(slot);
+      if(m.autorun) auto.push({macro:m,slot});
     });
-    wrap.appendChild(bar);
-    barsEl.appendChild(wrap);
+    if(bar.children.length){ wrap.appendChild(bar); barsEl.appendChild(wrap); }  // 整組都 hidden 就不畫這一組
   });
+  auto.forEach(a=>runMacro(a.macro,a.slot));   // 切分頁時自動執行
 }
 
 $("#clearBtn").onclick=()=>{ clearLog(); };
