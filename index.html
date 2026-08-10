@@ -454,51 +454,51 @@ const PHASES = [
 /p \u65E9\u6C34\u96F7   \u6C34\u96F7   \u8996\u7DDA |   \u8996\u7DDA1 |   \u708E   |   \u9045\u6C34\u96F7   \u6C34\u96F7   \u8996\u7DDA |  \u8996\u7DDA2 |  \u3064\u306A\u307F 
 /p ------------------------------------------------------------------------------------------------------` }
     ]},
-    { label:"\u2460 \u8996\u7DDA1\uFF08GC1\uFF09", note:"\u7B2C1\u6309\uFF1A\u770B GC1 \u7279\u6548 \u2014 \u5B9A\u4E0B \u65E9\u8996\u7DDA\u30FB\u65E9\u8996\u7DDA\u52A0\u901F\u5F48\u30FB\u9072\u6C34\u96F7\u52A0\u901F\u5F48", cols:2, macros:[
-      { name:"\u672C\u5F53", icon:{label:"\u25CB",type:"ok"}, key:"z", clearFirst:false,
-        tl:{ aeg:"\u6B62", g1:"\u898B\u306A\u3044", alw:"\u6B62" }, raw:
+    { label:"\u2460 \u8996\u7DDA1\uFF08GC1\uFF09", note:"\u7B2C1\u6309\uFF1A\u770B GC1 \u7279\u6548 \u2014 \u5B9A\u4E0B \u65E9\u8996\u7DDA\u30FB\u65E9\u8996\u7DDA\u52A0\u901F\u5F48\u30FB\u665A\u6C34\u96F7\u52A0\u901F\u5F48", cols:2, macros:[
+      { name:"\u771F", icon:{label:"\u25CB",type:"ok"}, key:"z", clearFirst:false,
+        tl:{ aeg:"\u505C", g1:"\u4E0D\u770B", alw:"\u505C" }, raw:
 `/p                           \u6B62  |  \u898B\u306A\u3044  |          |                   \u6B62            |            |         ` },
-      { name:"\u5618", icon:{label:"\u00D7",type:"ng"}, key:"x", clearFirst:false,
-        tl:{ aeg:"\u52D5\u304F", g1:"\u898B\u308B", alw:"\u52D5\u304F" }, raw:
+      { name:"\u5047", icon:{label:"\u00D7",type:"ng"}, key:"x", clearFirst:false,
+        tl:{ aeg:"\u52D5", g1:"\u770B", alw:"\u52D5" }, raw:
 `/p                         \u52D5\u304F |   \u898B\u308B    |          |                \u52D5\u304F           |             |         ` }
     ]},
-    { label:"② 炎・つなみ（カオス）", note:"第2按：看カオス特效＋敵視列表技名，按 炎 或 つなみ 的真偽；第6按：另一邊（上次沒按的）", cols:4, macros:[
-      { name:"炎 本当", icon:{label:"炎",type:"ok"}, key:"c", clearFirst:false,
-        tl:{ fire:"本当" }, raw:
+    { label:"② 炎・海嘯（混沌）", note:"第2按：看混沌特效＋仇恨列表技能名，按 炎 或 海嘯 的真假；第6按：另一邊（上次沒按的）", cols:4, macros:[
+      { name:"炎 真", icon:{label:"炎",type:"ok"}, key:"c", clearFirst:false,
+        tl:{ fire:"真" }, raw:
 `/p                                 |              | 本当 |                                   |            |         
 /micon ファイア` },
-      { name:"炎 嘘", icon:{label:"炎",type:"ng"}, key:"v", clearFirst:false,
-        tl:{ fire:"嘘" }, raw:
+      { name:"炎 假", icon:{label:"炎",type:"ng"}, key:"v", clearFirst:false,
+        tl:{ fire:"假" }, raw:
 `/p                                 |              |   嘘   |                                   |            |         ` },
-      { name:"つなみ 本当", icon:{label:"波",type:"ok"}, key:"b", clearFirst:false,
-        tl:{ tsu:"本当" }, raw:
+      { name:"海嘯 真", icon:{label:"波",type:"ok"}, key:"b", clearFirst:false,
+        tl:{ tsu:"真" }, raw:
 `/p                                 |              |          |                                   |            |  本当
 /micon 水遁の術` },
-      { name:"つなみ 嘘", icon:{label:"波",type:"ng"}, key:"n", clearFirst:false,
-        tl:{ tsu:"嘘" }, raw:
+      { name:"海嘯 假", icon:{label:"波",type:"ng"}, key:"n", clearFirst:false,
+        tl:{ tsu:"假" }, raw:
 `/p                                 |              |          |                                   |            |   嘘` }
     ]},
-    { label:"③ 早遅水雷", note:"第3按：GC1 著彈後看水雷剩秒（約40〜50秒＝早水雷、約1分＝遅水雷）；第5按：另一邊，不必等著彈", cols:4, macros:[
-      { name:"早水雷 本当", icon:{label:"早",type:"ok"}, key:"a", clearFirst:false,
-        tl:{ we:"本当" }, raw:
+    { label:"③ 早晚水雷", note:"第3按：GC1 著彈後看水雷剩秒（約40〜50秒＝早水雷、約1分＝晚水雷）；第5按：另一邊，不必等著彈", cols:4, macros:[
+      { name:"早水雷 真", icon:{label:"早",type:"ok"}, key:"a", clearFirst:false,
+        tl:{ we:"真" }, raw:
 `/p  本当                        |              |          |                                   |            |         
 /micon スプリント general` },
-      { name:"早水雷 嘘", icon:{label:"早",type:"ng"}, key:"s", clearFirst:false,
-        tl:{ we:"嘘" }, raw:
+      { name:"早水雷 假", icon:{label:"早",type:"ng"}, key:"s", clearFirst:false,
+        tl:{ we:"假" }, raw:
 `/p   嘘                          |              |          |                                   |            |         ` },
-      { name:"遅水雷 本当", icon:{label:"遅",type:"ok"}, key:"d", clearFirst:false,
-        tl:{ wl:"本当" }, raw:
+      { name:"晚水雷 真", icon:{label:"晚",type:"ok"}, key:"d", clearFirst:false,
+        tl:{ wl:"真" }, raw:
 `/p                                 |              |          |  本当                          |            |         ` },
-      { name:"遅水雷 嘘", icon:{label:"遅",type:"ng"}, key:"f", clearFirst:false,
-        tl:{ wl:"嘘" }, raw:
+      { name:"晚水雷 假", icon:{label:"晚",type:"ng"}, key:"f", clearFirst:false,
+        tl:{ wl:"假" }, raw:
 `/p                                 |              |          |    嘘                           |            |         ` }
     ]},
-    { label:"④ 視線2（GC2）", note:"第4按：看 GC2 特效 — 定下 遲視線・遲視線加速彈・早水雷加速彈", cols:2, macros:[
-      { name:"本当", icon:{label:"○",type:"ok"}, key:"q", clearFirst:false,
-        tl:{ aew:"止", alg:"止", g2:"見ない" }, raw:
+    { label:"④ 視線2（GC2）", note:"第4按：看 GC2 特效 — 定下 晚視線・晚視線加速彈・早水雷加速彈", cols:2, macros:[
+      { name:"真", icon:{label:"○",type:"ok"}, key:"q", clearFirst:false,
+        tl:{ aew:"停", alg:"停", g2:"不看" }, raw:
 `/p                 止            |              |          |                             止  | 見ない |         ` },
-      { name:"嘘", icon:{label:"×",type:"ng"}, key:"w", clearFirst:false,
-        tl:{ aew:"動く", alg:"動く", g2:"見る" }, raw:
+      { name:"假", icon:{label:"×",type:"ng"}, key:"w", clearFirst:false,
+        tl:{ aew:"動", alg:"動", g2:"看" }, raw:
 `/p               動く           |              |          |                          動く |   見る   |         ` }
     ]}
   ]}
@@ -551,18 +551,19 @@ function appendImage(img){
 
 /* ---------- P4 時間軸：10 欄對位渲染 ----------
    sep:true ＝該欄右側畫分隔線，對應原文的 "|"。
-   w ＝該欄最小寬度（em，約等於幾個全形字）。 */
+   w ＝該欄最小寬度（em，約等於幾個全形字）。
+   欄名與內容都已中文化；日文原文只留在各宏的 raw。 */
 const TL_COLS=[
   {k:"we",  label:"早水雷", w:3},
   {k:"aew", label:"水雷",   w:2},
   {k:"aeg", label:"視線",   w:2, sep:true},
   {k:"g1",  label:"視線1",  w:3, sep:true},
-  {k:"fire",label:"炎",     w:2, sep:true},
-  {k:"wl",  label:"遅水雷", w:3},
+  {k:"fire",label:"炎",     w:1, sep:true},
+  {k:"wl",  label:"晚水雷", w:3},
   {k:"alw", label:"水雷",   w:2},
   {k:"alg", label:"視線",   w:2, sep:true},
   {k:"g2",  label:"視線2",  w:3, sep:true},
-  {k:"tsu", label:"つなみ", w:3}
+  {k:"tsu", label:"海嘯",   w:2}
 ];
 function tlGrid(){
   let g=logEl.querySelector(".tl");
@@ -597,7 +598,7 @@ function tlHeader(){
   tlCell(g,"","h1",TL_COLS[3]);
   tlCell(g,"","h1",TL_COLS[4]);
   tlCell(g,"","h1",TL_COLS[5]);
-  tlCell(g,"遅加速","h1 sep",null,2);
+  tlCell(g,"晚加速","h1 sep",null,2);
   tlCell(g,"","h1",TL_COLS[8]);
   tlCell(g,"","h1",TL_COLS[9]);
   tlRow(Object.fromEntries(TL_COLS.map(c=>[c.k,c.label])),"h2");
