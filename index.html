@@ -162,9 +162,9 @@
      所以改成 grid 固定欄位，欄位歸屬寫在 macro.tl。 */
   .tl-wrap{overflow-x:auto;margin:2px 0 4px;padding-bottom:2px}
   .tl{display:grid;grid-template-columns:repeat(10,auto);width:max-content;font-size:15px;line-height:1.5}
-  .tl-c{padding:3px 8px;text-align:center;white-space:nowrap;color:var(--cyan)}
+  .tl-c{padding:.2em .5em;text-align:center;white-space:nowrap;color:var(--cyan)}
   .tl-c.sep{border-right:1px solid #3a4a70}
-  .tl-c.h1{color:var(--muted);font-size:13px}
+  .tl-c.h1{color:var(--muted);font-size:.85em}
   .tl-c.h2{color:var(--gold-soft);font-weight:700}
   .tl-c.rule{padding:0;height:0;border-bottom:1px solid #3a4a70;margin:3px 0}
   .tl-c.val{font-weight:700;animation:fade .16s ease}
@@ -603,6 +603,15 @@ function tlGrid(){
   }
   return g;
 }
+/* 表格若比聊天欄寬就逐級縮小字級（15px 起、最低 10px），消除橫向捲動。
+   對齊不受影響：表頭與資料列都是同一個 grid 的格子，欄位對位是結構性的。 */
+function tlFit(){
+  const w=logEl.querySelector(".tl-wrap"), g=logEl.querySelector(".tl");
+  if(!w||!g) return;
+  let fs=15; g.style.fontSize=fs+"px";
+  while(fs>10 && w.scrollWidth>w.clientWidth){ fs--; g.style.fontSize=fs+"px"; }
+}
+window.addEventListener("resize",tlFit);
 function tlCell(g,text,cls,col,span){
   const d=document.createElement("div");
   d.className="tl-c"+(cls?" "+cls:"")+(col&&col.sep?" sep":"");
@@ -615,6 +624,7 @@ function tlRule(){ const g=tlGrid(); tlCell(g,"","rule",null,TL_COLS.length); }
 function tlRow(cells,cls){
   const g=tlGrid();
   TL_COLS.forEach(c=>tlCell(g,cells[c.k],cls,c));
+  tlFit();
   logEl.scrollTop=logEl.scrollHeight;
 }
 function tlHeader(){
