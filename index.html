@@ -161,7 +161,7 @@
      原文靠半形空格對齊，那是照遊戲內字型 17 調的，網頁字型一定歪；
      所以改成 grid 固定欄位，欄位歸屬寫在 macro.tl。 */
   .tl-wrap{overflow-x:auto;margin:2px 0 4px;padding-bottom:2px}
-  .tl{display:grid;grid-template-columns:repeat(10,auto);width:max-content;font-size:16px;line-height:1.5}
+  .tl{display:grid;grid-template-columns:repeat(10,auto);width:max-content;font-size:15px;line-height:1.5}
   .tl-c{padding:3px 8px;text-align:center;white-space:nowrap;color:var(--cyan)}
   .tl-c.sep{border-right:1px solid #3a4a70}
   .tl-c.h1{color:var(--muted);font-size:13px}
@@ -483,26 +483,26 @@ const PHASES = [
 /p ------------------------------------------------------------------------------------------------------` }
     ]},
     { label:"\u2460 \u8996\u7DDA1\uFF08GC1\uFF09", cols:2, macros:[
-      { name:"\u771F", icon:{label:"\u25CB",type:"ok"}, key:"z", clearFirst:false, sets:{gc1:true},
+      { name:"\u771F", icon:{label:"\u25CB",type:"ok"}, key:"1", clearFirst:false, sets:{gc1:true},
         tl:{ aeg:"\u505C", g1:"\u4E0D\u770B", alw:"\u505C" }, raw:
 `/p                           \u6B62  |  \u898B\u306A\u3044  |          |                   \u6B62            |            |         ` },
-      { name:"\u5047", icon:{label:"\u00D7",type:"ng"}, key:"x", clearFirst:false, sets:{gc1:false},
+      { name:"\u5047", icon:{label:"\u00D7",type:"ng"}, key:"2", clearFirst:false, sets:{gc1:false},
         tl:{ aeg:"\u52D5", g1:"\u770B", alw:"\u52D5" }, raw:
 `/p                         \u52D5\u304F |   \u898B\u308B    |          |                \u52D5\u304F           |             |         ` }
     ]},
     { label:"② 火・水（混沌）", cols:4, macros:[
-      { name:"火 真", icon:{label:"火",type:"ok"}, key:"c", clearFirst:false, when:()=>chaosOK("fire"), sets:setOnce("chaosFirst","fire"),
+      { name:"火 真", icon:{label:"火",type:"ok"}, key:"q", clearFirst:false, when:()=>chaosOK("fire"), sets:setOnce("chaosFirst","fire"),
         tl:{ fire:"鋼鐵" }, raw:
 `/p                                 |              | 本当 |                                   |            |         
 /micon ファイア` },
-      { name:"火 假", icon:{label:"火",type:"ng"}, key:"v", clearFirst:false, when:()=>chaosOK("fire"), sets:setOnce("chaosFirst","fire"),
+      { name:"火 假", icon:{label:"火",type:"ng"}, key:"w", clearFirst:false, when:()=>chaosOK("fire"), sets:setOnce("chaosFirst","fire"),
         tl:{ fire:"月環" }, raw:
 `/p                                 |              |   嘘   |                                   |            |         ` },
-      { name:"水 真", icon:{label:"水",type:"ok"}, key:"b", clearFirst:false, when:()=>chaosOK("tsu"), sets:setOnce("chaosFirst","tsu"),
+      { name:"水 真", icon:{label:"水",type:"ok"}, key:"e", clearFirst:false, when:()=>chaosOK("tsu"), sets:setOnce("chaosFirst","tsu"),
         tl:{ tsu:"月環" }, raw:
 `/p                                 |              |          |                                   |            |  本当
 /micon 水遁の術` },
-      { name:"水 假", icon:{label:"水",type:"ng"}, key:"n", clearFirst:false, when:()=>chaosOK("tsu"), sets:setOnce("chaosFirst","tsu"),
+      { name:"水 假", icon:{label:"水",type:"ng"}, key:"r", clearFirst:false, when:()=>chaosOK("tsu"), sets:setOnce("chaosFirst","tsu"),
         tl:{ tsu:"鋼鐵" }, raw:
 `/p                                 |              |          |                                   |            |   嘘` }
     ]},
@@ -522,10 +522,10 @@ const PHASES = [
 `/p                                 |              |          |    嘘                           |            |         ` }
     ]},
     { label:"④ 視線2（GC2）", cols:2, macros:[
-      { name:"真", icon:{label:"○",type:"ok"}, key:"q", clearFirst:false, sets:{gc2:true},
+      { name:"真", icon:{label:"○",type:"ok"}, key:"z", clearFirst:false, sets:{gc2:true},
         tl:{ aew:"停", alg:"停", g2:"不看" }, raw:
 `/p                 止            |              |          |                             止  | 見ない |         ` },
-      { name:"假", icon:{label:"×",type:"ng"}, key:"w", clearFirst:false, sets:{gc2:false},
+      { name:"假", icon:{label:"×",type:"ng"}, key:"x", clearFirst:false, sets:{gc2:false},
         tl:{ aew:"動", alg:"動", g2:"看" }, raw:
 `/p               動く           |              |          |                          動く |   見る   |         ` }
     ]}
