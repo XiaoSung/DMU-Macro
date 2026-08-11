@@ -161,10 +161,10 @@
      原文靠半形空格對齊，那是照遊戲內字型 17 調的，網頁字型一定歪；
      所以改成 grid 固定欄位，欄位歸屬寫在 macro.tl。 */
   .tl-wrap{overflow-x:auto;margin:2px 0 4px;padding-bottom:2px}
-  .tl{display:grid;grid-template-columns:repeat(10,auto);width:max-content;font-size:13px;line-height:1.5}
-  .tl-c{padding:2px 5px;text-align:center;white-space:nowrap;color:var(--cyan)}
+  .tl{display:grid;grid-template-columns:repeat(10,auto);width:max-content;font-size:16px;line-height:1.5}
+  .tl-c{padding:3px 8px;text-align:center;white-space:nowrap;color:var(--cyan)}
   .tl-c.sep{border-right:1px solid #3a4a70}
-  .tl-c.h1{color:var(--muted);font-size:12px}
+  .tl-c.h1{color:var(--muted);font-size:13px}
   .tl-c.h2{color:var(--gold-soft);font-weight:700}
   .tl-c.rule{padding:0;height:0;border-bottom:1px solid #3a4a70;margin:3px 0}
   .tl-c.val{font-weight:700;animation:fade .16s ease}
@@ -256,7 +256,7 @@ function chaosOK(mech){ return tlState.chaosFirst===null || tlState.chaosFirst!=
 
 const PHASES = [
   { id:"p1", label:"P1", groups:[
-    { label:"ずびずばテレポ", note:"混亂睡眠固定式 — 相同箭頭＝紅框／不同箭頭＝藍框", macros:[
+    { label:"ずびずばテレポ", macros:[
       { name:"位置図", icon:{label:"\u21D5",type:"ref"}, autorun:true,
         image:{ src:"https://yan-flash.com/api/uploads/1780476493649-398c3c2d.webp",
                 alt:"\u305A\u3073\u305A\u3070\u30C6\u30EC\u30DD \u4F4D\u7F6E\u56F3" } }
@@ -264,7 +264,7 @@ const PHASES = [
   ]},
 
   { id:"p3a", label:"P3前", groups:[
-    { label:"究極破壞光（アルテマブラスター）", note:"凱夫卡順時針／骰子逆時針（選好基準再按下）", cols:4, macros:[
+    { label:"究極破壞光（アルテマブラスター）— 凱夫卡順時針／骰子逆時針", cols:4, macros:[
       { name:"基準 1", icon:{label:"1",type:"1"}, key:"1", raw:
 `/p -----------------------------------
 /p  1 : 1D |　　　　　１
@@ -362,7 +362,7 @@ const PHASES = [
 /p    　　　　　　　　Ｂ
 /micon "D" Waymark` }
     ]},
-    { label:"究極破壞光（アルテマブラスター）", note:"凱夫卡逆時針／骰子順時針", cols:4, macros:[
+    { label:"究極破壞光（アルテマブラスター）— 凱夫卡逆時針／骰子順時針", cols:4, macros:[
       { name:"基準 1", icon:{label:"1",type:"1"}, key:["shift+1","a"], raw:
 `/p -----------------------------------
 /p  1 : 1A |　　　　　1
@@ -463,7 +463,7 @@ const PHASES = [
   ]},
 
   { id:"p3b", label:"P3後", groups:[
-    { label:"黑洞（後半）", note:"連線全程對照圖", macros:[
+    { label:"黑洞（後半）", macros:[
       { name:"全程圖", icon:{label:"\u56F3",type:"ref"}, autorun:true,
         image:{ src:"P3.jpg", wide:true, alt:"P3\u5F8C\u534A \u9023\u7DDA\u5168\u7A0B\u5716" } }
     ]}
@@ -474,7 +474,7 @@ const PHASES = [
      \u7D2F\u52A0\u5F0F\uFF1A\u958B\u59CB\u9375\u5370\u8868\u982D\uFF0C\u4E4B\u5F8C\u6BCF\u6309\u4E00\u6B21\u5F80\u8868\u4E0B\u758A\u4E00\u884C\u3002
      raw \u70BA\u904A\u6232\u5167\u539F\u6587\u9010\u5B57\u4FDD\u5B58\uFF08\u7A7A\u683C\u7167\u539F\u6A23\uFF09\uFF0C\u5BE6\u969B\u6E32\u67D3\u770B tl\u3002 */
   { id:"p4", label:"P4", groups:[
-    { label:"\u6642\u9593\u8EF8 \u2014 \u8868\u982D", note:"\u5207\u5230 P4 \u5206\u9801\u6642\u81EA\u52D5\u5370\u51FA\uFF0C\u4E0D\u986F\u793A\u6309\u9215\uFF1B\u9375\u76E4 0 \u6216\u91CD\u6309\u5206\u9801\u53EF\u91CD\u5370\uFF08\uFF1D\u91CD\u7F6E\u6642\u9593\u8EF8\uFF09", macros:[
+    { label:"\u6642\u9593\u8EF8 \u2014 \u8868\u982D", macros:[
       { name:"\u958B\u59CB", icon:{label:"\u25B6",type:"ref"}, key:"0", autorun:true, hidden:true, tl:"head", raw:
 `/cl
 /p ------------------------------------------------------------------------------------------------------
@@ -482,7 +482,7 @@ const PHASES = [
 /p \u65E9\u6C34\u96F7   \u6C34\u96F7   \u8996\u7DDA |   \u8996\u7DDA1 |   \u708E   |   \u9045\u6C34\u96F7   \u6C34\u96F7   \u8996\u7DDA |  \u8996\u7DDA2 |  \u3064\u306A\u307F 
 /p ------------------------------------------------------------------------------------------------------` }
     ]},
-    { label:"\u2460 \u8996\u7DDA1\uFF08GC1\uFF09", note:"\u7B2C1\u6309\uFF1A\u770B GC1 \u7279\u6548 \u2014 \u5B9A\u4E0B \u65E9\u8996\u7DDA\u30FB\u65E9\u8996\u7DDA\u52A0\u901F\u5F48\u30FB\u665A\u6C34\u96F7\u52A0\u901F\u5F48", cols:2, macros:[
+    { label:"\u2460 \u8996\u7DDA1\uFF08GC1\uFF09", cols:2, macros:[
       { name:"\u771F", icon:{label:"\u25CB",type:"ok"}, key:"z", clearFirst:false, sets:{gc1:true},
         tl:{ aeg:"\u505C", g1:"\u4E0D\u770B", alw:"\u505C" }, raw:
 `/p                           \u6B62  |  \u898B\u306A\u3044  |          |                   \u6B62            |            |         ` },
@@ -490,23 +490,23 @@ const PHASES = [
         tl:{ aeg:"\u52D5", g1:"\u770B", alw:"\u52D5" }, raw:
 `/p                         \u52D5\u304F |   \u898B\u308B    |          |                \u52D5\u304F           |             |         ` }
     ]},
-    { label:"② 炎・海嘯（混沌）", note:"第2按：看混沌特效＋仇恨列表技能名，按 炎 或 海嘯 的真假；第6按：另一邊（按過的那邊會自動鎖住）", cols:4, macros:[
-      { name:"炎 真", icon:{label:"炎",type:"ok"}, key:"c", clearFirst:false, when:()=>chaosOK("fire"), sets:setOnce("chaosFirst","fire"),
-        tl:{ fire:"真" }, raw:
+    { label:"② 火・水（混沌）", cols:4, macros:[
+      { name:"火 真", icon:{label:"火",type:"ok"}, key:"c", clearFirst:false, when:()=>chaosOK("fire"), sets:setOnce("chaosFirst","fire"),
+        tl:{ fire:"鋼鐵" }, raw:
 `/p                                 |              | 本当 |                                   |            |         
 /micon ファイア` },
-      { name:"炎 假", icon:{label:"炎",type:"ng"}, key:"v", clearFirst:false, when:()=>chaosOK("fire"), sets:setOnce("chaosFirst","fire"),
-        tl:{ fire:"假" }, raw:
+      { name:"火 假", icon:{label:"火",type:"ng"}, key:"v", clearFirst:false, when:()=>chaosOK("fire"), sets:setOnce("chaosFirst","fire"),
+        tl:{ fire:"月環" }, raw:
 `/p                                 |              |   嘘   |                                   |            |         ` },
-      { name:"海嘯 真", icon:{label:"波",type:"ok"}, key:"b", clearFirst:false, when:()=>chaosOK("tsu"), sets:setOnce("chaosFirst","tsu"),
-        tl:{ tsu:"真" }, raw:
+      { name:"水 真", icon:{label:"水",type:"ok"}, key:"b", clearFirst:false, when:()=>chaosOK("tsu"), sets:setOnce("chaosFirst","tsu"),
+        tl:{ tsu:"月環" }, raw:
 `/p                                 |              |          |                                   |            |  本当
 /micon 水遁の術` },
-      { name:"海嘯 假", icon:{label:"波",type:"ng"}, key:"n", clearFirst:false, when:()=>chaosOK("tsu"), sets:setOnce("chaosFirst","tsu"),
-        tl:{ tsu:"假" }, raw:
+      { name:"水 假", icon:{label:"水",type:"ng"}, key:"n", clearFirst:false, when:()=>chaosOK("tsu"), sets:setOnce("chaosFirst","tsu"),
+        tl:{ tsu:"鋼鐵" }, raw:
 `/p                                 |              |          |                                   |            |   嘘` }
     ]},
-    { label:"③ 早晚水雷", note:"第3按：GC1 著彈後看水雷剩秒（約40〜50秒＝早水雷、約1分＝晚水雷）；第5按：另一邊，不必等著彈。真假跟著 ①／④ 自動鎖，第5按只會剩 1 顆", cols:4, macros:[
+    { label:"③ 早晚水雷", cols:4, macros:[
       { name:"早水雷 真", icon:{label:"早",type:"ok"}, key:"a", clearFirst:false, when:()=>waterOK("we",true), sets:setOnce("waterFirst","we"),
         tl:{ we:"真" }, raw:
 `/p  本当                        |              |          |                                   |            |         
@@ -521,7 +521,7 @@ const PHASES = [
         tl:{ wl:"假" }, raw:
 `/p                                 |              |          |    嘘                           |            |         ` }
     ]},
-    { label:"④ 視線2（GC2）", note:"第4按：看 GC2 特效 — 定下 晚視線・晚視線加速彈・早水雷加速彈", cols:2, macros:[
+    { label:"④ 視線2（GC2）", cols:2, macros:[
       { name:"真", icon:{label:"○",type:"ok"}, key:"q", clearFirst:false, sets:{gc2:true},
         tl:{ aew:"停", alg:"停", g2:"不看" }, raw:
 `/p                 止            |              |          |                             止  | 見ない |         ` },
@@ -586,7 +586,7 @@ const TL_COLS=[
   {k:"aew", label:"水雷",   w:2},
   {k:"aeg", label:"視線",   w:2, sep:true},
   {k:"g1",  label:"視線1",  w:3, sep:true},
-  {k:"fire",label:"炎",     w:1, sep:true},
+  {k:"fire",label:"炎",     w:2, sep:true},
   {k:"wl",  label:"晚水雷", w:3},
   {k:"alw", label:"水雷",   w:2},
   {k:"alg", label:"視線",   w:2, sep:true},
