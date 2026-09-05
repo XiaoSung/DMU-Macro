@@ -224,6 +224,8 @@
    autorun : true ＝切到該分頁時自動執行一次（多顆會依出現順序全跑）。
    hidden  : true ＝不畫按鈕，只靠 autorun／鍵盤觸發。整組都 hidden 時該組不顯示。
    stage（群組屬性）: 2＝P4 六按完成後才顯示的按鈕組（雷冰記憶）；不寫＝1。
+   autoOnly（群組屬性）: ()=>bool —— 回傳 true 時，如果這組只剩一顆按得下去的按鈕，
+          就自動幫你按掉（② 的第二顆水雷在 GC1／GC2 都判完後就是唯一解）。
    mark : {id,text} —— 按下時在表格最下方印「橫線＋一行字」；同 id 重按原地更新那行字。
    clearCols : ["aew","alg"] —— 作廢這幾欄：已經印出來的清空，之後印的也一律留白（表頭不動）。
           所以按的順序不拘，GC1／GC2 在它之前或之後按都是同一個結果。
@@ -246,7 +248,7 @@
    waterFirst  ：③ 已經按掉哪一欄（"we"＝短／"wl"＝長）
    chaosFirst  ：② 已經按掉哪個機制（"fire"／"tsu"）
    waterBoth / chaosBoth ：該對的兩邊都按過了（四者集齊＝六按完成→切到雷冰按鈕）
-   accel       ：加速度炸彈按掉了哪顆（"early"／"late"），用來把另一顆鎖灰
+   accel       ：加速度炸彈按掉了哪顆（"has"＝有／"none"＝沒有），用來把另一顆鎖灰
    hideCols    ：被加速度炸彈作廢的欄位；之後的資料列在這些欄一律印空白
    按「開始」（切 P4 分頁或按 0）會整組重置。 */
 const tlInit=()=>({ gc1:null, gc2:null, waterFirst:null, chaosFirst:null, waterBoth:false, chaosBoth:false, accel:null, hideCols:[] });
@@ -502,18 +504,23 @@ const PHASES = [
         tl:{ aeg:"\u52D5", g1:"\u770B", alw:"\u52D5" }, raw:
 `/p                         \u52D5\u304F |   \u898B\u308B    |          |                \u52D5\u304F           |             |         ` }
     ]},
-    /* ①後 加速度炸彈：GC1 一按完，① 那兩顆就換成這兩顆（早晚在 GC1 時就看得出來）。
-       早 ＝ 作廢 GC2 會印的兩格（早加速/水雷、晚加速/視線）——此時 GC2 還沒按，
+    /* ①後 加速度炸彈：GC1 一按完，① 那兩顆就換成這兩顆（有沒有炸彈在 GC1 時就看得出來）。
+       ○ 有 ＝ 作廢 GC2 會印的兩格（早加速/水雷、晚加速/視線）——此時 GC2 還沒按，
              所以不是「刪掉」而是「先登記，等 GC2 按下去時那兩格直接留白」。
-       晚 ＝ 作廢 GC1 剛印的兩格（早加速/視線、晚加速/水雷）——已經在畫面上，當場清掉。
-       視線1／視線2 欄的「不看／看」都不動。按錯或要改判 GC1 就按 0 重來。 */
+       × 沒有 ＝ 作廢 GC1 剛印的兩格（早加速/視線、晚加速/水雷）——已經在畫面上，當場清掉。
+       視線1／視線2 欄的「不看／看」都不動。按錯或要改判 GC1 就按 0 重來。
+       按的時機不拘，GC2 之後再按結果也一樣；但六按跑完換到雷冰那頁後這組就收起來了。 */
     { label:"①後 加速度炸彈", cols:2, show:()=>tlState.gc1!==null, macros:[
-      { name:"早加速度炸彈", icon:{label:"早",type:"ref"}, key:"g", clearFirst:false,
-        when:()=>tlState.accel!=="late",  sets:{accel:"early"}, clearCols:["aew","alg"] },
-      { name:"晚加速度炸彈", icon:{label:"晚",type:"ref"}, key:"h", clearFirst:false,
-        when:()=>tlState.accel!=="early", sets:{accel:"late"},  clearCols:["aeg","alw"] }
+      { name:"有", icon:{label:"○",type:"ok"}, key:"g", clearFirst:false,
+        when:()=>tlState.accel!=="none", sets:{accel:"has"},  clearCols:["aew","alg"] },
+      { name:"沒有", icon:{label:"×",type:"ng"}, key:"h", clearFirst:false,
+        when:()=>tlState.accel!=="has",  sets:{accel:"none"}, clearCols:["aeg","alw"] }
     ]},
-    { label:"② 短長水雷", cols:4, macros:[
+    /* GC1／GC2 都判完、而且第一顆水雷已經按掉時，第二顆是唯一解 —— 交給 autoOnly 自動補。
+       第一顆還沒按時剩兩種可能，不會自動按。 */
+    { label:"② 短長水雷", cols:4,
+      autoOnly:()=>tlState.gc1!==null && tlState.gc2!==null && tlState.waterFirst!==null && !tlState.waterBoth,
+      macros:[
       { name:"短水雷 雷外", icon:{label:"短",type:"ok"}, key:"a", clearFirst:false, when:()=>waterOK("we",true), sets:setPair("waterFirst","waterBoth","we"),
         tl:{ we:"雷外" }, raw:
 `/p  本当                        |              |          |                                   |            |         
@@ -759,6 +766,21 @@ function runMacro(macro,slot){
   }
   p4CheckStage();
   refreshSlots();
+  autoFillGroups();
+}
+
+/* 只剩唯一解的組直接幫按。按完 GC2 會走到這裡，把第二顆水雷自動補上；
+   補完那一顆的 autoOnly 就變 false，不會再往下滾。 */
+function autoFillGroups(){
+  if(!currentPhase) return;
+  for(const g of currentPhase.groups){
+    if(!g.autoOnly || !g.autoOnly()) continue;
+    const legal=g.macros.filter(m=>!m.when || m.when());
+    if(legal.length!==1) continue;
+    const ref=slotRefs.find(r=>r.macro===legal[0]);
+    runMacro(legal[0], ref?ref.slot:null);
+    return;                                    // 一次只補一顆，補完會自己再檢查一輪
+  }
 }
 
 /* ---------- 鍵盤快捷鍵：macro.key（"a"、"shift+3"…），只對目前顯示的分頁生效 ---------- */
