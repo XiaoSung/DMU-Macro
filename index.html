@@ -225,6 +225,8 @@
    hidden  : true ＝不畫按鈕，只靠 autorun／鍵盤觸發。整組都 hidden 時該組不顯示。
    stage（群組屬性）: 2＝P4 六按完成後才顯示的按鈕組（雷冰記憶）；不寫＝1。
    mark : {id,text} —— 按下時在表格最下方印「橫線＋一行字」；同 id 重按原地更新那行字。
+   clearCols : ["aew","alg"] —— 把時間軸表格中這幾欄的資料格清空（表頭不動）。
+          網頁專用：遊戲內宏無法刪除已印出的行，所以這種宏不寫 raw。
    clearFirst : 預設 true —— 按下時先清空聊天（模擬 /clear），FF14 一般宏的行為。
           設成 false ＝「累加式」宏：不清空，直接往現有內容下方疊加。
           用在 P4 時間軸這種「開始鍵印表頭、之後每按一次疊一行」的宏。
@@ -241,8 +243,9 @@
    waterFirst  ：③ 已經按掉哪一欄（"we"＝早／"wl"＝晚）
    chaosFirst  ：② 已經按掉哪個機制（"fire"／"tsu"）
    waterBoth / chaosBoth ：該對的兩邊都按過了（四者集齊＝六按完成→切到雷冰按鈕）
+   accel       ：⑥ 加速度炸彈按掉了哪顆（"early"／"late"），用來把另一顆鎖灰
    按「開始」（切 P4 分頁或按 0）會整組重置。 */
-let tlState={ gc1:null, gc2:null, waterFirst:null, chaosFirst:null, waterBoth:false, chaosBoth:false };
+let tlState={ gc1:null, gc2:null, waterFirst:null, chaosFirst:null, waterBoth:false, chaosBoth:false, accel:null };
 const setPair=(fk,bk,v)=>s=>{ if(s[fk]===null) s[fk]=v; else if(s[fk]!==v) s[bk]=true; };   // 第一次記 fk；按到另一邊時立 bk
 
 /* ③ 早晚水雷：第3按跟 GC1 的真假、第5按跟 GC2 的；按過的欄位直接鎖死。
@@ -538,6 +541,17 @@ const PHASES = [
       { name:"雷 假", icon:{label:"雷",type:"ng"}, key:"w", clearFirst:false, mark:{id:"thunder", text:"雷　　假"} },
       { name:"冰 真", icon:{label:"冰",type:"ok"}, key:"e", clearFirst:false, mark:{id:"ice", text:"冰　　真"} },
       { name:"冰 假", icon:{label:"冰",type:"ng"}, key:"r", clearFirst:false, mark:{id:"ice", text:"冰　　假"} }
+    ]},
+    /* ⑥ 加速度炸彈（同樣是六按完成後才出現，跟⑤同頁）：確定是早還是晚之後，
+       把用不到的那一組「停／動」直接從表上抹掉。
+       早 ＝ 清 GC2 印的兩格（早加速/水雷、晚加速/視線）
+       晚 ＝ 清 GC1 印的兩格（早加速/視線、晚加速/水雷）
+       視線1／視線2 欄的「不看／看」不動。按錯或要重來就按 0 重置整張表。 */
+    { label:"⑥ 加速度炸彈 — 清掉用不到的停／動（網頁專用）", stage:2, cols:2, macros:[
+      { name:"早加速度炸彈", icon:{label:"早",type:"ref"}, key:"g", clearFirst:false,
+        when:()=>tlState.accel!=="late",  sets:{accel:"early"}, clearCols:["aew","alg"] },
+      { name:"晚加速度炸彈", icon:{label:"晚",type:"ref"}, key:"h", clearFirst:false,
+        when:()=>tlState.accel!=="early", sets:{accel:"late"},  clearCols:["aeg","alw"] }
     ]}
   ]}
 ];
@@ -625,7 +639,7 @@ window.addEventListener("resize",tlFit);
 function tlCell(g,text,cls,col,span){
   const d=document.createElement("div");
   d.className="tl-c"+(cls?" "+cls:"")+(col&&col.sep?" sep":"");
-  if(col) d.style.minWidth=col.w+"em";
+  if(col){ d.style.minWidth=col.w+"em"; d.dataset.k=col.k; }   // data-k：讓 tlClearCols 找得到欄
   if(span) d.style.gridColumn="span "+span;
   d.textContent=text||"";
   g.appendChild(d); return d;
@@ -637,6 +651,14 @@ function tlRow(cells,cls){
   tlFit();
   logEl.scrollTop=logEl.scrollHeight;
 }
+/* 把指定欄的資料格清空（只掃 .val，表頭 .h2 與雷冰記憶列不受影響）。 */
+function tlClearCols(keys){
+  const g=logEl.querySelector(".tl");
+  if(!g) return;
+  keys.forEach(k=>g.querySelectorAll('.tl-c.val[data-k="'+k+'"]').forEach(c=>{ c.textContent=""; }));
+  tlFit();
+}
+
 /* 雷冰記憶列：在表格最下方印「橫線＋一行字」（跟表頭的分隔線同款）。
    同 id 重按只更新文字，不重複疊行。 */
 function tlMark(mk){
@@ -703,11 +725,12 @@ function runMacro(macro,slot){
   // 預設每個宏開頭先清空對話框（模擬 /clear）；clearFirst:false ＝累加式，往下疊加
   if(macro.clearFirst !== false) clearLog();
   // 表頭＝一輪的開始，順便把鎖定狀態整組重置
-  if(macro.tl==="head") tlState={ gc1:null, gc2:null, waterFirst:null, chaosFirst:null, waterBoth:false, chaosBoth:false };
+  if(macro.tl==="head") tlState={ gc1:null, gc2:null, waterFirst:null, chaosFirst:null, waterBoth:false, chaosBoth:false, accel:null };
   if(macro.image){
     if(macro.image.wide) showWide(macro.image);
     else appendImage(macro.image);
   }
+  if(macro.clearCols) tlClearCols(macro.clearCols);
   if(macro.tl){
     // P4 時間軸：走欄位化渲染，raw 只是原文保存
     if(macro.tl==="head") tlHeader();
