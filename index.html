@@ -240,7 +240,7 @@
 
 /* ---------- P4 時間軸狀態：用來鎖住不可能的按鈕 ----------
    gc1 / gc2   ：兩次大十字的真假（true＝真）
-   waterFirst  ：③ 已經按掉哪一欄（"we"＝早／"wl"＝晚）
+   waterFirst  ：③ 已經按掉哪一欄（"we"＝短／"wl"＝長）
    chaosFirst  ：② 已經按掉哪個機制（"fire"／"tsu"）
    waterBoth / chaosBoth ：該對的兩邊都按過了（四者集齊＝六按完成→切到雷冰按鈕）
    accel       ：⑥ 加速度炸彈按掉了哪顆（"early"／"late"），用來把另一顆鎖灰
@@ -248,7 +248,8 @@
 let tlState={ gc1:null, gc2:null, waterFirst:null, chaosFirst:null, waterBoth:false, chaosBoth:false, accel:null };
 const setPair=(fk,bk,v)=>s=>{ if(s[fk]===null) s[fk]=v; else if(s[fk]!==v) s[bk]=true; };   // 第一次記 fk；按到另一邊時立 bk
 
-/* ③ 早晚水雷：第3按跟 GC1 的真假、第5按跟 GC2 的；按過的欄位直接鎖死。
+/* ③ 短長水雷：第3按跟 GC1 的真假、第5按跟 GC2 的；按過的欄位直接鎖死。
+   顯示用「雷外／水外」＝原本的「真／假」，判定邏輯不變。
    注意：「水雷真假＝該次 GC 真假」是從 yan-flash 的用詞（GC1回目の真偽）推的，攻略沒明寫。
    若實戰發現推錯，重按 ①／④ 的另一顆即可改判，或按 0 整組重置。 */
 function waterOK(col,truth){
@@ -512,19 +513,19 @@ const PHASES = [
         tl:{ tsu:"鋼鐵" }, raw:
 `/p                                 |              |          |                                   |            |   嘘` }
     ]},
-    { label:"③ 早晚水雷", cols:4, macros:[
-      { name:"早水雷 真", icon:{label:"早",type:"ok"}, key:"a", clearFirst:false, when:()=>waterOK("we",true), sets:setPair("waterFirst","waterBoth","we"),
-        tl:{ we:"真" }, raw:
+    { label:"③ 短長水雷", cols:4, macros:[
+      { name:"短水雷 雷外", icon:{label:"短",type:"ok"}, key:"a", clearFirst:false, when:()=>waterOK("we",true), sets:setPair("waterFirst","waterBoth","we"),
+        tl:{ we:"雷外" }, raw:
 `/p  本当                        |              |          |                                   |            |         
 /micon スプリント general` },
-      { name:"早水雷 假", icon:{label:"早",type:"ng"}, key:"s", clearFirst:false, when:()=>waterOK("we",false), sets:setPair("waterFirst","waterBoth","we"),
-        tl:{ we:"假" }, raw:
+      { name:"短水雷 水外", icon:{label:"短",type:"ng"}, key:"s", clearFirst:false, when:()=>waterOK("we",false), sets:setPair("waterFirst","waterBoth","we"),
+        tl:{ we:"水外" }, raw:
 `/p   嘘                          |              |          |                                   |            |         ` },
-      { name:"晚水雷 真", icon:{label:"晚",type:"ok"}, key:"d", clearFirst:false, when:()=>waterOK("wl",true), sets:setPair("waterFirst","waterBoth","wl"),
-        tl:{ wl:"真" }, raw:
+      { name:"長水雷 雷外", icon:{label:"長",type:"ok"}, key:"d", clearFirst:false, when:()=>waterOK("wl",true), sets:setPair("waterFirst","waterBoth","wl"),
+        tl:{ wl:"雷外" }, raw:
 `/p                                 |              |          |  本当                          |            |         ` },
-      { name:"晚水雷 假", icon:{label:"晚",type:"ng"}, key:"f", clearFirst:false, when:()=>waterOK("wl",false), sets:setPair("waterFirst","waterBoth","wl"),
-        tl:{ wl:"假" }, raw:
+      { name:"長水雷 水外", icon:{label:"長",type:"ng"}, key:"f", clearFirst:false, when:()=>waterOK("wl",false), sets:setPair("waterFirst","waterBoth","wl"),
+        tl:{ wl:"水外" }, raw:
 `/p                                 |              |          |    嘘                           |            |         ` }
     ]},
     { label:"④ 視線2（GC2）", cols:2, macros:[
@@ -606,12 +607,12 @@ function appendImage(img){
    w ＝該欄最小寬度（em，約等於幾個全形字）。
    欄名與內容都已中文化；日文原文只留在各宏的 raw。 */
 const TL_COLS=[
-  {k:"we",  label:"早水雷", w:3},
+  {k:"we",  label:"短水雷", w:3},
   {k:"aew", label:"水雷",   w:2},
   {k:"aeg", label:"視線",   w:2, sep:true},
   {k:"g1",  label:"視線1",  w:3, sep:true},
   {k:"fire",label:"炎",     w:2, sep:true},
-  {k:"wl",  label:"晚水雷", w:3},
+  {k:"wl",  label:"長水雷", w:3},
   {k:"alw", label:"水雷",   w:2},
   {k:"alg", label:"視線",   w:2, sep:true},
   {k:"g2",  label:"視線2",  w:3, sep:true},
