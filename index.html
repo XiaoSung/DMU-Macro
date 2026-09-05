@@ -253,17 +253,17 @@ const tlInit=()=>({ gc1:null, gc2:null, waterFirst:null, chaosFirst:null, waterB
 let tlState=tlInit();
 const setPair=(fk,bk,v)=>s=>{ if(s[fk]===null) s[fk]=v; else if(s[fk]!==v) s[bk]=true; };   // 第一次記 fk；按到另一邊時立 bk
 
-/* ③ 短長水雷：第3按跟 GC1 的真假、第5按跟 GC2 的；按過的欄位直接鎖死。
+/* ② 短長水雷：這一對的第一次跟 GC1 的真假、第二次跟 GC2 的；按過的欄位直接鎖死。
    顯示用「雷外／水外」＝原本的「真／假」，判定邏輯不變。
    注意：「水雷真假＝該次 GC 真假」是從 yan-flash 的用詞（GC1回目の真偽）推的，攻略沒明寫。
    若實戰發現推錯，重按 ①／④ 的另一顆即可改判，或按 0 整組重置。 */
 function waterOK(col,truth){
   const s=tlState;
-  if(s.waterFirst===null) return s.gc1===null || s.gc1===truth;   // 這是第3按
+  if(s.waterFirst===null) return s.gc1===null || s.gc1===truth;   // 這一對的第一次
   if(s.waterFirst===col)  return false;                            // 這欄填過了
-  return s.gc2===null || s.gc2===truth;                            // 這是第5按
+  return s.gc2===null || s.gc2===truth;                            // 這一對的第二次
 }
-/* ② 炎・海嘯：第2按兩種都行，第6按只剩另一種。真假各自獨立觀察，不過濾。 */
+/* ③ 炎・海嘯：第一次兩種都行，第二次只剩另一種。真假各自獨立觀察，不過濾。 */
 function chaosOK(mech){ return tlState.chaosFirst===null || tlState.chaosFirst!==mech; }
 
 const PHASES = [
@@ -507,13 +507,28 @@ const PHASES = [
              所以不是「刪掉」而是「先登記，等 GC2 按下去時那兩格直接留白」。
        晚 ＝ 作廢 GC1 剛印的兩格（早加速/視線、晚加速/水雷）——已經在畫面上，當場清掉。
        視線1／視線2 欄的「不看／看」都不動。按錯或要改判 GC1 就按 0 重來。 */
-    { label:"①後 加速度炸彈 — 作廢用不到的停／動（網頁專用）", cols:2, show:()=>tlState.gc1!==null, macros:[
+    { label:"①後 加速度炸彈", cols:2, show:()=>tlState.gc1!==null, macros:[
       { name:"早加速度炸彈", icon:{label:"早",type:"ref"}, key:"g", clearFirst:false,
         when:()=>tlState.accel!=="late",  sets:{accel:"early"}, clearCols:["aew","alg"] },
       { name:"晚加速度炸彈", icon:{label:"晚",type:"ref"}, key:"h", clearFirst:false,
         when:()=>tlState.accel!=="early", sets:{accel:"late"},  clearCols:["aeg","alw"] }
     ]},
-    { label:"② 火・水（混沌）", cols:4, macros:[
+    { label:"② 短長水雷", cols:4, macros:[
+      { name:"短水雷 雷外", icon:{label:"短",type:"ok"}, key:"a", clearFirst:false, when:()=>waterOK("we",true), sets:setPair("waterFirst","waterBoth","we"),
+        tl:{ we:"雷外" }, raw:
+`/p  本当                        |              |          |                                   |            |         
+/micon スプリント general` },
+      { name:"短水雷 水外", icon:{label:"短",type:"ng"}, key:"s", clearFirst:false, when:()=>waterOK("we",false), sets:setPair("waterFirst","waterBoth","we"),
+        tl:{ we:"水外" }, raw:
+`/p   嘘                          |              |          |                                   |            |         ` },
+      { name:"長水雷 雷外", icon:{label:"長",type:"ok"}, key:"d", clearFirst:false, when:()=>waterOK("wl",true), sets:setPair("waterFirst","waterBoth","wl"),
+        tl:{ wl:"雷外" }, raw:
+`/p                                 |              |          |  本当                          |            |         ` },
+      { name:"長水雷 水外", icon:{label:"長",type:"ng"}, key:"f", clearFirst:false, when:()=>waterOK("wl",false), sets:setPair("waterFirst","waterBoth","wl"),
+        tl:{ wl:"水外" }, raw:
+`/p                                 |              |          |    嘘                           |            |         ` }
+    ]},
+    { label:"③ 火・水（混沌）", cols:4, macros:[
       { name:"火 真", icon:{label:"火",type:"ok"}, key:"q", clearFirst:false, when:()=>chaosOK("fire"), sets:setPair("chaosFirst","chaosBoth","fire"),
         tl:{ fire:"鋼鐵" }, raw:
 `/p                                 |              | 本当 |                                   |            |         
@@ -528,21 +543,6 @@ const PHASES = [
       { name:"水 假", icon:{label:"水",type:"ng"}, key:"r", clearFirst:false, when:()=>chaosOK("tsu"), sets:setPair("chaosFirst","chaosBoth","tsu"),
         tl:{ tsu:"鋼鐵" }, raw:
 `/p                                 |              |          |                                   |            |   嘘` }
-    ]},
-    { label:"③ 短長水雷", cols:4, macros:[
-      { name:"短水雷 雷外", icon:{label:"短",type:"ok"}, key:"a", clearFirst:false, when:()=>waterOK("we",true), sets:setPair("waterFirst","waterBoth","we"),
-        tl:{ we:"雷外" }, raw:
-`/p  本当                        |              |          |                                   |            |         
-/micon スプリント general` },
-      { name:"短水雷 水外", icon:{label:"短",type:"ng"}, key:"s", clearFirst:false, when:()=>waterOK("we",false), sets:setPair("waterFirst","waterBoth","we"),
-        tl:{ we:"水外" }, raw:
-`/p   嘘                          |              |          |                                   |            |         ` },
-      { name:"長水雷 雷外", icon:{label:"長",type:"ok"}, key:"d", clearFirst:false, when:()=>waterOK("wl",true), sets:setPair("waterFirst","waterBoth","wl"),
-        tl:{ wl:"雷外" }, raw:
-`/p                                 |              |          |  本当                          |            |         ` },
-      { name:"長水雷 水外", icon:{label:"長",type:"ng"}, key:"f", clearFirst:false, when:()=>waterOK("wl",false), sets:setPair("waterFirst","waterBoth","wl"),
-        tl:{ wl:"水外" }, raw:
-`/p                                 |              |          |    嘘                           |            |         ` }
     ]},
     { label:"④ 視線2（GC2）", cols:2, macros:[
       { name:"真", icon:{label:"○",type:"ok"}, key:"z", clearFirst:false, sets:{gc2:true},
