@@ -261,6 +261,7 @@ const setPair=(fk,bk,v)=>s=>{ if(s[fk]===null) s[fk]=v; else if(s[fk]!==v) s[bk]
    若實戰發現推錯，重按 ①／④ 的另一顆即可改判，或按 0 整組重置。 */
 function waterOK(col,truth){
   const s=tlState;
+  if(s.waterBoth) return false;                                    // 兩顆都按完＝整組鎖死，避免重複疊行
   if(s.waterFirst===null) return s.gc1===null || s.gc1===truth;   // 這一對的第一次
   if(s.waterFirst===col)  return false;                            // 這欄填過了
   return s.gc2===null || s.gc2===truth;                            // 這一對的第二次
