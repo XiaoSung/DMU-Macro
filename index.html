@@ -225,8 +225,11 @@
    hidden  : true ＝不畫按鈕，只靠 autorun／鍵盤觸發。整組都 hidden 時該組不顯示。
    stage（群組屬性）: 2＝P4 六按完成後才顯示的按鈕組（雷冰記憶）；不寫＝1。
    mark : {id,text} —— 按下時在表格最下方印「橫線＋一行字」；同 id 重按原地更新那行字。
-   clearCols : ["aew","alg"] —— 把時間軸表格中這幾欄的資料格清空（表頭不動）。
+   clearCols : ["aew","alg"] —— 作廢這幾欄：已經印出來的清空，之後印的也一律留白（表頭不動）。
+          所以按的順序不拘，GC1／GC2 在它之前或之後按都是同一個結果。
           網頁專用：遊戲內宏無法刪除已印出的行，所以這種宏不寫 raw。
+   show（群組屬性）: ()=>bool —— 回傳 false 時整組不畫也不註冊鍵盤。
+          用來做「按完就換掉」的按鈕組，例如 ① 按完換成加速度炸彈。
    clearFirst : 預設 true —— 按下時先清空聊天（模擬 /clear），FF14 一般宏的行為。
           設成 false ＝「累加式」宏：不清空，直接往現有內容下方疊加。
           用在 P4 時間軸這種「開始鍵印表頭、之後每按一次疊一行」的宏。
@@ -243,9 +246,11 @@
    waterFirst  ：③ 已經按掉哪一欄（"we"＝短／"wl"＝長）
    chaosFirst  ：② 已經按掉哪個機制（"fire"／"tsu"）
    waterBoth / chaosBoth ：該對的兩邊都按過了（四者集齊＝六按完成→切到雷冰按鈕）
-   accel       ：⑥ 加速度炸彈按掉了哪顆（"early"／"late"），用來把另一顆鎖灰
+   accel       ：加速度炸彈按掉了哪顆（"early"／"late"），用來把另一顆鎖灰
+   hideCols    ：被加速度炸彈作廢的欄位；之後的資料列在這些欄一律印空白
    按「開始」（切 P4 分頁或按 0）會整組重置。 */
-let tlState={ gc1:null, gc2:null, waterFirst:null, chaosFirst:null, waterBoth:false, chaosBoth:false, accel:null };
+const tlInit=()=>({ gc1:null, gc2:null, waterFirst:null, chaosFirst:null, waterBoth:false, chaosBoth:false, accel:null, hideCols:[] });
+let tlState=tlInit();
 const setPair=(fk,bk,v)=>s=>{ if(s[fk]===null) s[fk]=v; else if(s[fk]!==v) s[bk]=true; };   // 第一次記 fk；按到另一邊時立 bk
 
 /* ③ 短長水雷：第3按跟 GC1 的真假、第5按跟 GC2 的；按過的欄位直接鎖死。
@@ -489,13 +494,24 @@ const PHASES = [
 /p \u65E9\u6C34\u96F7   \u6C34\u96F7   \u8996\u7DDA |   \u8996\u7DDA1 |   \u708E   |   \u9045\u6C34\u96F7   \u6C34\u96F7   \u8996\u7DDA |  \u8996\u7DDA2 |  \u3064\u306A\u307F 
 /p ------------------------------------------------------------------------------------------------------` }
     ]},
-    { label:"\u2460 \u8996\u7DDA1\uFF08GC1\uFF09", cols:2, macros:[
+    { label:"\u2460 \u8996\u7DDA1\uFF08GC1\uFF09", cols:2, show:()=>tlState.gc1===null, macros:[
       { name:"\u771F", icon:{label:"\u25CB",type:"ok"}, key:"1", clearFirst:false, sets:{gc1:true},
         tl:{ aeg:"\u505C", g1:"\u4E0D\u770B", alw:"\u505C" }, raw:
 `/p                           \u6B62  |  \u898B\u306A\u3044  |          |                   \u6B62            |            |         ` },
       { name:"\u5047", icon:{label:"\u00D7",type:"ng"}, key:"2", clearFirst:false, sets:{gc1:false},
         tl:{ aeg:"\u52D5", g1:"\u770B", alw:"\u52D5" }, raw:
 `/p                         \u52D5\u304F |   \u898B\u308B    |          |                \u52D5\u304F           |             |         ` }
+    ]},
+    /* ①後 加速度炸彈：GC1 一按完，① 那兩顆就換成這兩顆（早晚在 GC1 時就看得出來）。
+       早 ＝ 作廢 GC2 會印的兩格（早加速/水雷、晚加速/視線）——此時 GC2 還沒按，
+             所以不是「刪掉」而是「先登記，等 GC2 按下去時那兩格直接留白」。
+       晚 ＝ 作廢 GC1 剛印的兩格（早加速/視線、晚加速/水雷）——已經在畫面上，當場清掉。
+       視線1／視線2 欄的「不看／看」都不動。按錯或要改判 GC1 就按 0 重來。 */
+    { label:"①後 加速度炸彈 — 作廢用不到的停／動（網頁專用）", cols:2, show:()=>tlState.gc1!==null, macros:[
+      { name:"早加速度炸彈", icon:{label:"早",type:"ref"}, key:"g", clearFirst:false,
+        when:()=>tlState.accel!=="late",  sets:{accel:"early"}, clearCols:["aew","alg"] },
+      { name:"晚加速度炸彈", icon:{label:"晚",type:"ref"}, key:"h", clearFirst:false,
+        when:()=>tlState.accel!=="early", sets:{accel:"late"},  clearCols:["aeg","alw"] }
     ]},
     { label:"② 火・水（混沌）", cols:4, macros:[
       { name:"火 真", icon:{label:"火",type:"ok"}, key:"q", clearFirst:false, when:()=>chaosOK("fire"), sets:setPair("chaosFirst","chaosBoth","fire"),
@@ -542,17 +558,6 @@ const PHASES = [
       { name:"雷 假", icon:{label:"雷",type:"ng"}, key:"w", clearFirst:false, mark:{id:"thunder", text:"雷　　假"} },
       { name:"冰 真", icon:{label:"冰",type:"ok"}, key:"e", clearFirst:false, mark:{id:"ice", text:"冰　　真"} },
       { name:"冰 假", icon:{label:"冰",type:"ng"}, key:"r", clearFirst:false, mark:{id:"ice", text:"冰　　假"} }
-    ]},
-    /* ⑥ 加速度炸彈（同樣是六按完成後才出現，跟⑤同頁）：確定是早還是晚之後，
-       把用不到的那一組「停／動」直接從表上抹掉。
-       早 ＝ 清 GC2 印的兩格（早加速/水雷、晚加速/視線）
-       晚 ＝ 清 GC1 印的兩格（早加速/視線、晚加速/水雷）
-       視線1／視線2 欄的「不看／看」不動。按錯或要重來就按 0 重置整張表。 */
-    { label:"⑥ 加速度炸彈 — 清掉用不到的停／動（網頁專用）", stage:2, cols:2, macros:[
-      { name:"早加速度炸彈", icon:{label:"早",type:"ref"}, key:"g", clearFirst:false,
-        when:()=>tlState.accel!=="late",  sets:{accel:"early"}, clearCols:["aew","alg"] },
-      { name:"晚加速度炸彈", icon:{label:"晚",type:"ref"}, key:"h", clearFirst:false,
-        when:()=>tlState.accel!=="early", sets:{accel:"late"},  clearCols:["aeg","alw"] }
     ]}
   ]}
 ];
@@ -648,7 +653,7 @@ function tlCell(g,text,cls,col,span){
 function tlRule(){ const g=tlGrid(); tlCell(g,"","rule",null,TL_COLS.length); }
 function tlRow(cells,cls){
   const g=tlGrid();
-  TL_COLS.forEach(c=>tlCell(g,cells[c.k],cls,c));
+  TL_COLS.forEach(c=>tlCell(g, (cls==="val"&&tlState.hideCols.includes(c.k))?"":cells[c.k], cls, c));
   tlFit();
   logEl.scrollTop=logEl.scrollHeight;
 }
@@ -726,12 +731,16 @@ function runMacro(macro,slot){
   // 預設每個宏開頭先清空對話框（模擬 /clear）；clearFirst:false ＝累加式，往下疊加
   if(macro.clearFirst !== false) clearLog();
   // 表頭＝一輪的開始，順便把鎖定狀態整組重置
-  if(macro.tl==="head") tlState={ gc1:null, gc2:null, waterFirst:null, chaosFirst:null, waterBoth:false, chaosBoth:false, accel:null };
+  if(macro.tl==="head") tlState=tlInit();
   if(macro.image){
     if(macro.image.wide) showWide(macro.image);
     else appendImage(macro.image);
   }
-  if(macro.clearCols) tlClearCols(macro.clearCols);
+  if(macro.clearCols){
+    // 已經印出來的直接清掉，還沒印的靠 hideCols 擋下來（GC1 →加速度炸彈→ GC2 走的就是後者）
+    macro.clearCols.forEach(k=>{ if(!tlState.hideCols.includes(k)) tlState.hideCols.push(k); });
+    tlClearCols(macro.clearCols);
+  }
   if(macro.tl){
     // P4 時間軸：走欄位化渲染，raw 只是原文保存
     if(macro.tl==="head") tlHeader();
@@ -795,22 +804,31 @@ function selectPhase(idx){
 }
 let currentPhase=null;
 let p4Stage=1;   // P4 按鈕階段：1＝時間軸六按，2＝雷冰記憶（六按完成後）
-// 六按全齊（gc1、gc2、水雷兩邊、火水兩邊）→ 換到第 2 階段按鈕；按 0 重置會換回來
+let p4Sig="";    // 目前畫出來這批按鈕的指紋：階段 + 每組 show() 的 0/1（沒寫 show 的算 1）
+function p4SigOf(stage){
+  return stage+"|"+(currentPhase?currentPhase.groups.map(g=>g.show?(g.show()?1:0):1).join(""):"");
+}
+/* 兩種換組都走這裡，指紋變了才重畫（重畫只動按鈕區，聊天區的表格不受影響）：
+   六按全齊 → 換到第 2 階段的雷冰按鈕；① 按完 → 換成加速度炸彈。按 0 重置會全部換回來。 */
 function p4CheckStage(){
   if(!currentPhase || currentPhase.id!=="p4") return;
   const want=(tlState.gc1!==null && tlState.gc2!==null && tlState.waterBoth && tlState.chaosBoth)?2:1;
-  if(want!==p4Stage){ p4Stage=want; renderBars(currentPhase,{autorun:false}); }
+  const sig=p4SigOf(want);
+  if(sig!==p4Sig){ p4Stage=want; p4Sig=sig; renderBars(currentPhase,{autorun:false}); }
 }
 function renderBars(phase,opts){
   const fresh=!opts||opts.autorun!==false;   // fresh＝換分頁；階段切換傳 {autorun:false}，不重跑 autorun 才不會清掉表格
   currentPhase=phase;
   if(fresh) p4Stage=1;
+  if(fresh && phase.id==="p4") tlState=tlInit();   // 換到 P4＝新的一輪，先歸零再決定要畫哪些組
+  p4Sig=p4SigOf(p4Stage);
   barsEl.innerHTML="";
   keyMap=[]; slotRefs=[];
   const auto=[];
   phase.groups.forEach(g=>{
     // 非當前階段的組不畫也不註冊鍵；全 hidden 的系統組（表頭）例外，鍵盤永遠有效
     if((g.stage||1)!==p4Stage && !g.macros.every(m=>m.hidden)) return;
+    if(g.show && !g.show()) return;   // show()＝false：整組不畫也不註冊鍵（① 換成加速度炸彈就是靠這個）
     const wrap=document.createElement("div"); wrap.className="group";
     const lbl=document.createElement("div"); lbl.className="group-label";
     lbl.innerHTML=`${escapeHtml(g.label)}${g.note?` <small>${escapeHtml(g.note)}</small>`:""}`;
